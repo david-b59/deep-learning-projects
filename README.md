@@ -1,15 +1,15 @@
-# Deep Learning Portfolio
+# Portfolio Deep Learning
 
-Three end-to-end deep learning projects, each with a trained model, an API and a web application. They were built as part of my Master's in Machine Learning Engineering, then extended on my own.
+Trois projets de deep learning de bout en bout, chacun avec un modèle entraîné, une API et une application web. Ils ont été réalisés dans le cadre de mon Master en Machine Learning Engineering, puis prolongés par mes soins.
 
-| # | Project | What it does | Status |
-|---|---------|--------------|--------|
-| 1 | [Brain Tumor Classifier](brain-tumor-classifier/) | Classifies brain MRI scans into 4 classes and highlights the decisive region with Grad-CAM | In progress |
-| 2 | Healthcare / patient care | Coming soon | Planned |
-| 3 | Food industry / quality control | Coming soon | Planned |
+| # | Projet | Ce qu'il fait | État |
+|---|--------|---------------|------|
+| 1 | [Brain Tumor Classifier](brain-tumor-classifier/) | Classe des IRM cérébrales en 4 catégories et met en évidence la zone décisive avec Grad-CAM | En cours |
+| 2 | Santé / soins aux patients | À venir | Prévu |
+| 3 | Agroalimentaire / contrôle qualité | À venir | Prévu |
 
-Each project is self-contained: clone the repository, open the project folder and follow its README.
+Chaque projet est autonome : clonez le dépôt, ouvrez le dossier du projet et suivez son README.
 
-## License
+## Licence
 
-[MIT](LICENSE)
+[MIT](LICENSE) (le texte légal de la licence reste en anglais, version officielle).

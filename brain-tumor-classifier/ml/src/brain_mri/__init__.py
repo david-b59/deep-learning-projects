@@ -1,1 +1,1 @@
-"""Brain tumor MRI classification: data pipeline, model, training and Grad-CAM."""
+"""Classification d'IRM cérébrales : données, modèle, entraînement et Grad-CAM."""

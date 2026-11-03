@@ -1,9 +1,9 @@
 # Brain Tumor Classifier
 
-Upload a brain MRI scan: a PyTorch model (transfer learning) predicts one of 4 classes — **glioma, meningioma, no tumor, pituitary** — and shows a **Grad-CAM heatmap** of the region that drove the decision.
+Déposez une IRM du cerveau : un modèle PyTorch (transfer learning) prédit l'une des 4 classes — **glioma, meningioma, no tumor, pituitary** — et affiche une **carte de chaleur Grad-CAM** de la zone qui a motivé la décision.
 
-> ⚠️ Technical demonstration only. **Not a medical device** and not usable for diagnosis.
+> ⚠️ Démonstration technique uniquement. **Ce n'est pas un dispositif médical** et il ne peut pas servir à poser un diagnostic.
 
-Built as part of my Master's in Machine Learning Engineering, then extended on my own.
+Projet réalisé dans le cadre de mon Master en Machine Learning Engineering, puis prolongé par mes soins.
 
-*Work in progress — full documentation, results and live demo will be added at the end of the project.*
+*Travail en cours — la documentation complète, les résultats et la démo en ligne seront ajoutés à la fin du projet.*

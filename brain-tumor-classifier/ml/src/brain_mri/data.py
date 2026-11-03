@@ -1,16 +1,17 @@
-"""Data pipeline: transforms, datasets, stratified split and DataLoaders.
+"""Pipeline de données : transformations, jeux de données, découpage stratifié et DataLoaders.
 
-This is phase A of the course pipeline (``ImageFolder`` + ``transforms`` +
-``DataLoader``), written as reusable, configurable and testable functions.
+C'est la phase A du pipeline du cours (``ImageFolder`` + ``transforms`` +
+``DataLoader``), écrite en fonctions réutilisables, configurables et testables.
 
-Splits:
-    - ``train``: most of the ``Training`` folder (stratified), light augmentation.
-    - ``val``: a stratified share of it (``val_fraction``), no augmentation. Used to
-      tune and stop training.
-    - ``test``: the ``Testing`` folder, no augmentation. Used once, at the end.
+Les trois jeux :
+    - ``train`` : la majeure partie du dossier ``Training`` (stratifiée), avec une
+      augmentation légère.
+    - ``val`` : une part stratifiée de ce dossier (``val_fraction``), sans augmentation.
+      Sert à régler l'entraînement et à l'arrêter au bon moment.
+    - ``test`` : le dossier ``Testing``, sans augmentation. Utilisé une seule fois, à la fin.
 
-Duplicate images found by :mod:`brain_mri.duplicates` are excluded first, so the
-same image cannot be on both sides of a split.
+Les images en double repérées par :mod:`brain_mri.duplicates` sont écartées d'abord :
+une même image ne peut donc pas se trouver des deux côtés d'un découpage.
 """
 
 from __future__ import annotations
@@ -40,37 +41,38 @@ LOGGER = logging.getLogger(__name__)
 
 @dataclass(frozen=True)
 class DataBundle:
-    """Everything the training and evaluation code needs from the data."""
+    """Tout ce dont l'entraînement et l'évaluation ont besoin côté données."""
 
-    train_loader: DataLoader
-    val_loader: DataLoader
-    test_loader: DataLoader
-    class_names: list[str]
-    sizes: dict[str, int]
+    train_loader: DataLoader  # lots d'entraînement (mélangés)
+    val_loader: DataLoader  # lots de validation
+    test_loader: DataLoader  # lots de test
+    class_names: list[str]  # noms des classes, triés (l'indice = l'étiquette)
+    sizes: dict[str, int]  # nombre d'images de chaque jeu
 
 
 def build_transforms(config: DataConfig, train: bool) -> v2.Compose:
-    """Build the preprocessing (and, for training, augmentation) pipeline.
+    """Construit la chaîne de prétraitement (et d'augmentation, pour l'entraînement).
 
     Args:
-        config: Data configuration.
-        train: If True, add light random augmentation.
+        config: Configuration des données.
+        train: Si True, ajoute une augmentation aléatoire légère.
 
     Returns:
-        A transform turning a PIL image into a normalized float tensor
-        of shape ``(3, image_size, image_size)``.
+        Une transformation qui convertit une image PIL en tenseur décimal normalisé
+        de forme ``(3, image_size, image_size)``.
     """
     size = (config.image_size, config.image_size)
     steps: list[v2.Transform] = [v2.ToImage(), v2.Resize(size, antialias=True)]
     if train:
+        # Augmentation : on montre au modèle des variantes légères de chaque image.
         steps += [
             v2.RandomHorizontalFlip(p=config.flip_prob),
             v2.RandomRotation(degrees=config.rotation_degrees),
             v2.ColorJitter(brightness=config.jitter, contrast=config.jitter),
         ]
     steps += [
-        v2.ToDtype(torch.float32, scale=True),  # uint8 [0, 255] -> float [0, 1]
-        v2.Normalize(mean=config.mean, std=config.std),  # ImageNet statistics
+        v2.ToDtype(torch.float32, scale=True),  # entiers 0-255 -> décimaux 0-1
+        v2.Normalize(mean=config.mean, std=config.std),  # statistiques d'ImageNet
     ]
     return v2.Compose(steps)
 
@@ -78,17 +80,20 @@ def build_transforms(config: DataConfig, train: bool) -> v2.Compose:
 def make_image_folder(
     root: Path, raw_dir: Path, excluded: set[str], transform: v2.Compose
 ) -> datasets.ImageFolder:
-    """Create an ``ImageFolder`` that skips the excluded (duplicate) files.
+    """Crée un ``ImageFolder`` qui ignore les fichiers exclus (les doublons).
 
     Args:
-        root: ``Training`` or ``Testing`` folder (one sub-folder per class).
-        raw_dir: Folder the excluded paths are relative to.
-        excluded: Relative POSIX paths to ignore.
-        transform: Transform applied to each image.
+        root: Dossier ``Training`` ou ``Testing`` (un sous-dossier par classe).
+        raw_dir: Dossier par rapport auquel les chemins exclus sont exprimés.
+        excluded: Chemins relatifs POSIX à ignorer.
+        transform: Transformation appliquée à chaque image.
+
+    Returns:
+        Le jeu de données ; le nom du sous-dossier de chaque image sert d'étiquette.
     """
 
     def is_valid_file(path: str) -> bool:
-        """Keep image files that are not in the exclusion list."""
+        """Garde les fichiers image qui ne sont pas dans la liste d'exclusion."""
         file = Path(path)
         relative = file.relative_to(raw_dir).as_posix()
         return file.suffix.lower() in IMAGE_SUFFIXES and relative not in excluded
@@ -99,34 +104,44 @@ def make_image_folder(
 def stratified_split(
     targets: list[int], val_fraction: float, seed: int
 ) -> tuple[list[int], list[int]]:
-    """Split sample indices into train and validation, keeping class proportions.
+    """Sépare des indices en entraînement et validation, en gardant les proportions de classes.
 
     Args:
-        targets: Class index of each sample.
-        val_fraction: Share of samples for validation, in (0, 1).
-        seed: Random seed (same seed, same split).
+        targets: Classe (indice) de chaque échantillon.
+        val_fraction: Part des échantillons pour la validation, entre 0 et 1 (exclus).
+        seed: Graine aléatoire (même graine = même découpage).
 
     Returns:
-        ``(train_indices, val_indices)``, disjoint and sorted.
+        ``(indices_entraînement, indices_validation)``, disjoints et triés.
     """
     train_idx, val_idx = train_test_split(
-        np.arange(len(targets)), test_size=val_fraction, stratify=targets, random_state=seed
+        np.arange(len(targets)),
+        test_size=val_fraction,
+        stratify=targets,  # chaque classe garde la même proportion dans les deux parties
+        random_state=seed,
     )
     return sorted(train_idx.tolist()), sorted(val_idx.tolist())
 
 
 def make_datasets(config: DataConfig) -> tuple[Dataset, Dataset, Dataset, list[str]]:
-    """Build the train, validation and test datasets.
+    """Construit les jeux d'entraînement, de validation et de test.
 
-    The training folder is loaded twice (with and without augmentation) and the
-    same stratified indices are applied to both, so validation is never augmented.
+    Le dossier d'entraînement est chargé deux fois (avec et sans augmentation) et les
+    mêmes indices stratifiés sont appliqués aux deux : la validation n'est donc jamais
+    augmentée.
+
+    Args:
+        config: Configuration des données.
 
     Returns:
-        ``(train, val, test, class_names)`` with sorted class names.
+        ``(train, val, test, class_names)`` avec les noms de classes triés.
+
+    Raises:
+        ValueError: Si Training et Testing n'ont pas les mêmes classes.
     """
     report = load_or_create_report(config.raw_dir, config.processed_dir)
     excluded = report.files_to_exclude()
-    LOGGER.info("Excluding %d duplicate file(s)", len(excluded))
+    LOGGER.info("%d fichier(s) en double écarté(s)", len(excluded))
 
     train_root = config.raw_dir / TRAIN_DIR_NAME
     test_root = config.raw_dir / TEST_DIR_NAME
@@ -140,18 +155,22 @@ def make_datasets(config: DataConfig) -> tuple[Dataset, Dataset, Dataset, list[s
         test_root, config.raw_dir, excluded, build_transforms(config, train=False)
     )
     if train_full.classes != test.classes:
-        raise ValueError(f"Class mismatch: {train_full.classes} vs {test.classes}")
+        raise ValueError(f"Classes différentes : {train_full.classes} et {test.classes}")
 
     train_idx, val_idx = stratified_split(train_full.targets, config.val_fraction, config.seed)
     return Subset(train_full, train_idx), Subset(val_full, val_idx), test, train_full.classes
 
 
 def _seed_worker(worker_id: int) -> None:
-    """Seed Python and NumPy in each DataLoader worker.
+    """Fixe la graine de Python et de NumPy dans chaque processus de chargement.
 
-    The ``v2`` augmentations draw from torch's random generator, which PyTorch seeds
-    per worker itself. For fully reproducible augmentation, the training script must
-    also call ``torch.manual_seed(config.seed)`` (done in step 3).
+    Les augmentations ``v2`` utilisent le générateur aléatoire de torch, que PyTorch
+    initialise lui-même pour chaque processus. Pour une augmentation entièrement
+    reproductible, le script d'entraînement doit aussi appeler
+    ``torch.manual_seed(config.seed)`` (prévu à l'étape 3).
+
+    Args:
+        worker_id: Numéro du processus de chargement (imposé par PyTorch, non utilisé).
     """
     worker_seed = torch.initial_seed() % 2**32
     np.random.seed(worker_seed)
@@ -159,30 +178,30 @@ def _seed_worker(worker_id: int) -> None:
 
 
 def build_dataloaders(config: DataConfig) -> DataBundle:
-    """Build the three DataLoaders. Only the training one is shuffled.
+    """Construit les trois DataLoaders. Seul celui d'entraînement est mélangé.
 
     Args:
-        config: Data configuration.
+        config: Configuration des données.
 
     Returns:
-        A :class:`DataBundle` with the loaders, class names and split sizes.
+        Un :class:`DataBundle` avec les DataLoaders, les noms de classes et les tailles.
     """
     train, val, test, class_names = make_datasets(config)
-    generator = torch.Generator().manual_seed(config.seed)  # reproducible shuffling
+    generator = torch.Generator().manual_seed(config.seed)  # mélange reproductible
 
     def loader(dataset: Dataset, shuffle: bool) -> DataLoader:
-        """Create a DataLoader with the shared settings."""
+        """Crée un DataLoader avec les réglages communs."""
         return DataLoader(
             dataset,
             batch_size=config.batch_size,
-            shuffle=shuffle,
+            shuffle=shuffle,  # True seulement pour l'entraînement
             num_workers=config.num_workers,
             worker_init_fn=_seed_worker,
             generator=generator if shuffle else None,
         )
 
     sizes = {"train": len(train), "val": len(val), "test": len(test)}
-    LOGGER.info("Split sizes: %s | classes: %s", sizes, class_names)
+    LOGGER.info("Tailles des jeux : %s | classes : %s", sizes, class_names)
     return DataBundle(
         train_loader=loader(train, shuffle=True),
         val_loader=loader(val, shuffle=False),
