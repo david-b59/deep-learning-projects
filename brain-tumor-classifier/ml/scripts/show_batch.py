@@ -1,10 +1,10 @@
-"""Inspect the data pipeline: split sizes, class balance and one training batch.
+"""Inspecte le pipeline de données : tailles des jeux, équilibre des classes et un lot.
 
-Prints the tensor shapes and labels of the first training batch and saves an
-image grid (``data/processed/batch.png``, git-ignored) so the augmentation and
-the labels can be checked by eye.
+Affiche les formes et les étiquettes du premier lot d'entraînement, et enregistre une
+grille d'images (``data/processed/batch.png``, hors git) pour contrôler à l'œil
+l'augmentation et les étiquettes.
 
-Usage (from ``brain-tumor-classifier/ml/``)::
+Utilisation (depuis ``brain-tumor-classifier/ml/``) ::
 
     uv run python scripts/show_batch.py
 """
@@ -16,19 +16,20 @@ from collections import Counter
 
 import matplotlib
 
-matplotlib.use("Agg")  # no window: write the figure to a file
+matplotlib.use("Agg")  # pas de fenêtre : la figure est écrite dans un fichier
 import matplotlib.pyplot as plt
 import torch
 
 from brain_mri.config import load_config
 from brain_mri.data import build_dataloaders
 
-N_SHOWN = 8
+N_SHOWN = 8  # nombre d'images affichées dans la grille
 
 
 def class_counts(loader: torch.utils.data.DataLoader, class_names: list[str]) -> dict[str, int]:
-    """Count the samples of each class in a loader's dataset (no image loading)."""
+    """Compte les échantillons de chaque classe d'un DataLoader (sans charger les images)."""
     dataset = loader.dataset
+    # Les jeux d'entraînement et de validation sont des Subset : on remonte au jeu de base.
     base = dataset.dataset if hasattr(dataset, "dataset") else dataset
     indices = dataset.indices if hasattr(dataset, "indices") else range(len(base))
     counts = Counter(base.targets[i] for i in indices)
@@ -36,12 +37,12 @@ def class_counts(loader: torch.utils.data.DataLoader, class_names: list[str]) ->
 
 
 def main() -> None:
-    """Build the DataLoaders and display one training batch."""
+    """Construit les DataLoaders et affiche un lot d'entraînement."""
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
     config = load_config().data
     bundle = build_dataloaders(config)
 
-    print("Classes:", bundle.class_names)
+    print("Classes :", bundle.class_names)
     for name, loader in (
         ("train", bundle.train_loader),
         ("val", bundle.val_loader),
@@ -52,26 +53,28 @@ def main() -> None:
         )
 
     images, labels = next(iter(bundle.train_loader))
-    print("\nBatch images:", tuple(images.shape), images.dtype)
-    print("Batch labels:", tuple(labels.shape), labels.dtype)
-    print("Labels      :", labels[:N_SHOWN].tolist())
-    print(f"Pixel range : min={images.min():.2f} max={images.max():.2f} mean={images.mean():.2f}")
+    print("\nImages du lot    :", tuple(images.shape), images.dtype)
+    print("Étiquettes du lot:", tuple(labels.shape), labels.dtype)
+    print("Étiquettes       :", labels[:N_SHOWN].tolist())
+    print(
+        f"Valeurs de pixels: min={images.min():.2f} max={images.max():.2f} moy={images.mean():.2f}"
+    )
 
-    # Undo the normalization to display the images with natural colors.
+    # On annule la normalisation pour afficher les images avec leurs couleurs naturelles.
     mean = torch.tensor(config.mean).view(1, 3, 1, 1)
     std = torch.tensor(config.std).view(1, 3, 1, 1)
     shown = (images[:N_SHOWN] * std + mean).clamp(0, 1)
 
     fig, axes = plt.subplots(2, 4, figsize=(10, 5.5))
     for ax, image, label in zip(axes.ravel(), shown, labels[:N_SHOWN], strict=True):
-        ax.imshow(image.permute(1, 2, 0))  # (C, H, W) -> (H, W, C)
+        ax.imshow(image.permute(1, 2, 0))  # (C, H, W) -> (H, W, C) pour matplotlib
         ax.set_title(bundle.class_names[label], fontsize=9)
         ax.axis("off")
     plt.tight_layout()
     config.processed_dir.mkdir(parents=True, exist_ok=True)
     output = config.processed_dir / "batch.png"
     fig.savefig(output, dpi=100)
-    print(f"Figure saved to {output}")
+    print(f"Figure enregistrée dans {output}")
 
 
 if __name__ == "__main__":

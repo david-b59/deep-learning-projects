@@ -1,4 +1,4 @@
-"""Shared test fixtures: a tiny fake MRI dataset built in a temporary folder."""
+"""Fixtures de test partagées : un minuscule faux jeu d'IRM créé dans un dossier temporaire."""
 
 from __future__ import annotations
 
@@ -12,23 +12,26 @@ from PIL import Image
 from brain_mri.config import DataConfig
 
 CLASSES = ["glioma", "meningioma", "notumor", "pituitary"]
-N_TRAIN_PER_CLASS = 20
-N_TEST_PER_CLASS = 6
+N_TRAIN_PER_CLASS = 20  # images d'entraînement par classe dans le faux jeu
+N_TEST_PER_CLASS = 6  # images de test par classe dans le faux jeu
 
 
 def _write_image(path: Path, seed: int) -> None:
-    """Write a small random grayscale JPEG (different seed, different content)."""
+    """Écrit un petit JPEG aléatoire en niveaux de gris (graine différente = contenu différent)."""
     rng = np.random.default_rng(seed)
     Image.fromarray(rng.integers(0, 256, (40, 50), dtype=np.uint8)).save(path)
 
 
 @pytest.fixture
 def raw_dir(tmp_path: Path) -> Path:
-    """Fake dataset with Training/ and Testing/, one folder per class.
+    """Crée un faux jeu de données avec Training/ et Testing/, un dossier par classe.
 
-    Planted duplicates (used by the tests):
-      - Testing/glioma/leak.jpg      is a copy of Training/glioma/img_0.jpg
-      - Training/notumor/copy.jpg    is a copy of Training/notumor/img_0.jpg
+    Doublons plantés (utilisés par les tests) :
+      - Testing/glioma/leak.jpg      est une copie de Training/glioma/img_0.jpg
+      - Training/notumor/copy.jpg    est une copie de Training/notumor/img_0.jpg
+
+    Returns:
+        Le dossier racine du faux jeu de données.
     """
     root = tmp_path / "raw"
     seed = 0
@@ -37,7 +40,7 @@ def raw_dir(tmp_path: Path) -> Path:
             folder = root / split / name
             folder.mkdir(parents=True)
             for i in range(count):
-                seed += 1
+                seed += 1  # une graine différente par image : tous les contenus diffèrent
                 _write_image(folder / f"img_{i}.jpg", seed)
     shutil.copy(root / "Training/glioma/img_0.jpg", root / "Testing/glioma/leak.jpg")
     shutil.copy(root / "Training/notumor/img_0.jpg", root / "Training/notumor/copy.jpg")
@@ -46,7 +49,7 @@ def raw_dir(tmp_path: Path) -> Path:
 
 @pytest.fixture
 def config(raw_dir: Path, tmp_path: Path) -> DataConfig:
-    """Data configuration pointing to the fake dataset."""
+    """Configuration des données qui pointe vers le faux jeu (images 32x32, lots de 8)."""
     return DataConfig(
         raw_dir=raw_dir,
         processed_dir=tmp_path / "processed",

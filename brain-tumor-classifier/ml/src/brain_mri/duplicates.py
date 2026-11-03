@@ -1,10 +1,10 @@
-"""Detect duplicate images, inside and between the Training and Testing folders.
+"""Détection des images en double, dans et entre les dossiers Training et Testing.
 
-Why it matters: if the same image is in both Training and Testing, the model is
-"tested" on something it has already seen, and the test score is inflated.
-Two files are duplicates here when their bytes are identical (same SHA-256).
-Near-duplicates (same scan re-saved or resized) are NOT detected: this is a
-documented limit of this check.
+Pourquoi c'est important : si la même image est dans Training et dans Testing, le
+modèle est « testé » sur une image qu'il a déjà vue, et le score de test est gonflé.
+Deux fichiers sont considérés comme doublons quand leurs octets sont identiques
+(même SHA-256). Les quasi-doublons (même scanner réenregistré, retourné ou
+redimensionné) ne sont PAS détectés : c'est une limite connue de cette vérification.
 """
 
 from __future__ import annotations
@@ -18,14 +18,22 @@ from pathlib import Path
 
 LOGGER = logging.getLogger(__name__)
 
-IMAGE_SUFFIXES = frozenset({".jpg", ".jpeg", ".png"})
-TRAIN_DIR_NAME = "Training"
-TEST_DIR_NAME = "Testing"
-REPORT_NAME = "duplicates_report.json"
+IMAGE_SUFFIXES = frozenset({".jpg", ".jpeg", ".png"})  # extensions d'images acceptées
+TRAIN_DIR_NAME = "Training"  # nom du dossier d'entraînement dans le jeu de données
+TEST_DIR_NAME = "Testing"  # nom du dossier de test dans le jeu de données
+REPORT_NAME = "duplicates_report.json"  # nom du rapport enregistré
 
 
 def sha256_file(path: Path, chunk_size: int = 1 << 20) -> str:
-    """Return the SHA-256 hex digest of a file, read by chunks (low memory)."""
+    """Calcule l'empreinte SHA-256 d'un fichier, lu par morceaux (peu de mémoire).
+
+    Args:
+        path: Fichier à lire.
+        chunk_size: Taille des morceaux lus, en octets (1 Mo par défaut).
+
+    Returns:
+        L'empreinte en hexadécimal : deux fichiers identiques donnent la même.
+    """
     digest = hashlib.sha256()
     with open(path, "rb") as file:
         while chunk := file.read(chunk_size):
@@ -34,19 +42,20 @@ def sha256_file(path: Path, chunk_size: int = 1 << 20) -> str:
 
 
 def hash_images(root: Path) -> dict[str, list[str]]:
-    """Hash every image under ``root``.
+    """Calcule l'empreinte de chaque image sous ``root``.
 
     Args:
-        root: Folder to scan recursively.
+        root: Dossier à parcourir récursivement.
 
     Returns:
-        A mapping ``digest -> [relative POSIX paths]``, sorted for determinism.
+        Un dictionnaire ``empreinte -> [chemins relatifs POSIX]``, trié pour être
+        déterministe.
 
     Raises:
-        FileNotFoundError: If ``root`` does not exist.
+        FileNotFoundError: Si ``root`` n'existe pas.
     """
     if not root.is_dir():
-        raise FileNotFoundError(f"Folder not found: {root}")
+        raise FileNotFoundError(f"Dossier introuvable : {root}")
     groups: dict[str, list[str]] = defaultdict(list)
     for path in sorted(root.rglob("*")):
         if path.is_file() and path.suffix.lower() in IMAGE_SUFFIXES:
@@ -56,56 +65,58 @@ def hash_images(root: Path) -> dict[str, list[str]]:
 
 @dataclass
 class DuplicateReport:
-    """Result of the duplicate check. All paths are relative to the raw folder."""
+    """Résultat de la vérification des doublons. Les chemins sont relatifs au dossier brut."""
 
-    n_train: int = 0
-    n_test: int = 0
-    # Test files whose content also exists in Training (data leakage).
+    n_train: int = 0  # nombre d'images dans Training
+    n_test: int = 0  # nombre d'images dans Testing
+    # Fichiers de test dont le contenu existe aussi dans Training (fuite de données).
     test_files_in_train: list[str] = field(default_factory=list)
-    # Groups of identical files inside Training (can leak into validation).
+    # Groupes de fichiers identiques dans Training (peuvent fuiter vers la validation).
     train_groups: list[list[str]] = field(default_factory=list)
-    # Groups of identical files inside Testing.
+    # Groupes de fichiers identiques dans Testing.
     test_groups: list[list[str]] = field(default_factory=list)
 
     def files_to_exclude(self) -> set[str]:
-        """Files the data pipeline must not use.
+        """Donne les fichiers que le pipeline de données ne doit pas utiliser.
 
-        - Test files that also exist in Training (leakage into the test score).
-        - Extra copies inside a group of identical files: the first path (sorted)
-          is kept, the others are dropped. This keeps copies of one image from
-          landing on both sides of the train/validation split.
+        - Les fichiers de test qui existent aussi dans Training (fuite vers le test).
+        - Les copies en trop dans un groupe de fichiers identiques : le premier chemin
+          (par ordre alphabétique) est gardé, les autres sont écartés. Ainsi, les
+          copies d'une même image ne se retrouvent pas des deux côtés du découpage
+          entraînement / validation.
         """
         excluded = set(self.test_files_in_train)
         for group in (*self.train_groups, *self.test_groups):
-            excluded.update(sorted(group)[1:])
+            excluded.update(sorted(group)[1:])  # [1:] : tout sauf le premier
         return excluded
 
     def to_json(self) -> str:
-        """Serialize the report to a readable JSON string."""
+        """Sérialise le rapport en texte JSON lisible."""
         return json.dumps(asdict(self), indent=2)
 
     @classmethod
     def from_json(cls, text: str) -> DuplicateReport:
-        """Rebuild a report from the output of :meth:`to_json`."""
+        """Reconstruit un rapport à partir du texte produit par :meth:`to_json`."""
         return cls(**json.loads(text))
 
 
 def find_duplicates(raw_dir: Path) -> DuplicateReport:
-    """Compare the images of ``Training`` and ``Testing`` by content.
+    """Compare par contenu les images de ``Training`` et de ``Testing``.
 
     Args:
-        raw_dir: Folder that contains ``Training/`` and ``Testing/``.
+        raw_dir: Dossier qui contient ``Training/`` et ``Testing/``.
 
     Returns:
-        The duplicate report.
+        Le rapport de doublons.
     """
     train = hash_images(raw_dir / TRAIN_DIR_NAME)
     test = hash_images(raw_dir / TEST_DIR_NAME)
 
-    # Paths are stored relative to raw_dir, so prefix them with their split folder.
     def prefixed(split: str, paths: list[str]) -> list[str]:
+        """Ajoute le nom du dossier (Training ou Testing) devant chaque chemin relatif."""
         return [f"{split}/{p}" for p in paths]
 
+    # Une empreinte présente des deux côtés = image de test déjà vue à l'entraînement.
     leaked = sorted(
         path
         for digest, paths in test.items()
@@ -116,12 +127,13 @@ def find_duplicates(raw_dir: Path) -> DuplicateReport:
         n_train=sum(len(p) for p in train.values()),
         n_test=sum(len(p) for p in test.values()),
         test_files_in_train=leaked,
+        # Plus d'un chemin pour une même empreinte = groupe d'images identiques.
         train_groups=[prefixed(TRAIN_DIR_NAME, p) for p in train.values() if len(p) > 1],
         test_groups=[prefixed(TEST_DIR_NAME, p) for p in test.values() if len(p) > 1],
     )
     LOGGER.info(
-        "Duplicates: %d test file(s) also in Training, %d group(s) inside Training, "
-        "%d group(s) inside Testing",
+        "Doublons : %d image(s) de test aussi dans Training, %d groupe(s) dans Training, "
+        "%d groupe(s) dans Testing",
         len(report.test_files_in_train),
         len(report.train_groups),
         len(report.test_groups),
@@ -130,7 +142,7 @@ def find_duplicates(raw_dir: Path) -> DuplicateReport:
 
 
 def save_report(report: DuplicateReport, processed_dir: Path) -> Path:
-    """Write the report as JSON in ``processed_dir`` and return its path."""
+    """Écrit le rapport en JSON dans ``processed_dir`` et renvoie son chemin."""
     processed_dir.mkdir(parents=True, exist_ok=True)
     path = processed_dir / REPORT_NAME
     path.write_text(report.to_json(), encoding="utf-8")
@@ -138,15 +150,23 @@ def save_report(report: DuplicateReport, processed_dir: Path) -> Path:
 
 
 def count_images(root: Path) -> int:
-    """Count the image files under ``root`` (no hashing, so it is fast)."""
+    """Compte les fichiers image sous ``root`` (sans calcul d'empreinte, donc rapide)."""
     return sum(1 for p in root.rglob("*") if p.is_file() and p.suffix.lower() in IMAGE_SUFFIXES)
 
 
 def load_or_create_report(raw_dir: Path, processed_dir: Path) -> DuplicateReport:
-    """Load the cached report, or compute and cache it.
+    """Charge le rapport en cache, ou le calcule puis l'enregistre.
 
-    The cache is recomputed when it is missing or when its image counts no longer
-    match the files on disk (data changed or downloaded again).
+    Le cache est recalculé s'il n'existe pas, ou si ses nombres d'images ne
+    correspondent plus aux fichiers présents sur le disque (données modifiées ou
+    retéléchargées).
+
+    Args:
+        raw_dir: Dossier qui contient ``Training/`` et ``Testing/``.
+        processed_dir: Dossier où le rapport est enregistré.
+
+    Returns:
+        Le rapport de doublons à jour.
     """
     path = processed_dir / REPORT_NAME
     if path.is_file():
@@ -155,7 +175,7 @@ def load_or_create_report(raw_dir: Path, processed_dir: Path) -> DuplicateReport
             raw_dir / TRAIN_DIR_NAME
         ) and cached.n_test == count_images(raw_dir / TEST_DIR_NAME):
             return cached
-        LOGGER.warning("Cached duplicate report is out of date: recomputing")
+        LOGGER.warning("Le rapport de doublons en cache est périmé : recalcul")
     report = find_duplicates(raw_dir)
     save_report(report, processed_dir)
     return report
