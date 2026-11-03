@@ -4,8 +4,18 @@ version = "0.1.0"
 description = "Brain tumor MRI classification with PyTorch transfer learning and Grad-CAM"
 requires-python = ">=3.12"
 dependencies = [
+    "kaggle>=2.2.5",
+    "matplotlib>=3.11.2",
+    "numpy>=2.5.4",
+    "pandas>=3.1.0",
+    "pydantic>=2.14.2",
+    "python-dotenv>=1.2.4",
+    "pyyaml>=6.0.3",
+    "scikit-learn>=1.9.1",
+    "six>=1.17.0",
     "torch>=2.15.0",
     "torchvision>=0.29.2",
+    "truststore>=0.10.5",
 ]
 
 [build-system]
@@ -17,3 +27,25 @@ packages = ["src/brain_mri"]
 
 [tool.ruff]
 line-length = 100
+
+[dependency-groups]
+dev = [
+    "ipykernel>=7.4.0",
+    "nbconvert>=7.17.2",
+    "nbformat>=5.11.1",
+    "pytest>=9.2.0",
+    "ruff>=0.17.3",
+]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "D"]
+ignore = ["D203", "D213"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["D"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
