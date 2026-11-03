@@ -1,0 +1,21 @@
+# Private (AI context, notes)
+CLAUDE.md
+**/CLAUDE.md
+PROMPT_*.md
+.ai/
+**/docs/ai/
+.claude/
+# Secrets
+.env
+**/.env
+# Data, models, experiments
+**/data/
+**/mlruns/
+*.pt
+*.pth
+*.safetensors
+# Python / Node
+__pycache__/
+.venv/
+node_modules/
+dist/
