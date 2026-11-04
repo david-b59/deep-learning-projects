@@ -57,6 +57,38 @@ class ModelConfig(BaseModel):
     freeze_backbone: bool = True  # au début, n'entraîner que la nouvelle tête
 
 
+class PhaseConfig(BaseModel):
+    """Réglages d'une phase d'entraînement."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    epochs: int = Field(gt=0)  # nombre maximal d'epochs (l'early stopping peut arrêter avant)
+    lr: float = Field(gt=0)  # taux d'apprentissage de l'optimiseur Adam
+
+
+class TrainConfig(BaseModel):
+    """Paramètres de l'entraînement en deux phases (voir ``configs/train.yaml``)."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    phase1: PhaseConfig = PhaseConfig(epochs=3, lr=1e-3)  # tête seule
+    phase2: PhaseConfig = PhaseConfig(epochs=5, lr=1e-4)  # dégel de layer4 (fine-tuning)
+    scheduler_factor: float = Field(0.5, gt=0, lt=1)  # le lr est multiplié par ce facteur...
+    scheduler_patience: int = Field(1, ge=0)  # ...après ce nombre d'epochs sans progrès
+    early_stopping_patience: int = Field(3, ge=1)  # epochs sans progrès avant d'arrêter la phase
+    early_stopping_min_delta: float = Field(1e-4, ge=0)  # amélioration minimale de la val loss
+    checkpoint_path: Path = Path("models/best.pt")  # meilleur modèle (hors git : *.pt)
+    figures_dir: Path = Path("docs/figures")  # courbes enregistrées en image
+    mlflow_experiment: str = "brain-tumor-classifier"  # nom de l'expérience MLflow
+    mlflow_dir: Path = Path("mlruns")  # dossier de suivi MLflow (hors git)
+
+    @field_validator("checkpoint_path", "figures_dir", "mlflow_dir")
+    @classmethod
+    def _resolve_against_project_root(cls, value: Path) -> Path:
+        """Transforme un chemin relatif en chemin absolu, à partir de la racine du projet."""
+        return value if value.is_absolute() else PROJECT_ROOT / value
+
+
 class Config(BaseModel):
     """Objet de configuration racine : regroupe les sections du fichier YAML."""
 
@@ -64,6 +96,7 @@ class Config(BaseModel):
 
     data: DataConfig = DataConfig()
     model: ModelConfig = ModelConfig()
+    training: TrainConfig = TrainConfig()
 
 
 def load_config(path: Path | str = DEFAULT_CONFIG_PATH) -> Config:
