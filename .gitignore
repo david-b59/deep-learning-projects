@@ -4,6 +4,7 @@
 # Données, modèles, expériences
 **/data/
 **/mlruns/
+**/models/
 *.pt
 *.pth
 *.safetensors
