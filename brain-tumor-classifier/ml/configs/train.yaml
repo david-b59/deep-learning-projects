@@ -18,3 +18,19 @@ data:
 model:
   pretrained: true                  # ResNet-50 avec les poids ImageNet
   freeze_backbone: true             # phase 1 : seule la nouvelle tête de classification est entraînée
+
+training:
+  phase1:                           # phase 1 : seule la nouvelle tête est entraînée
+    epochs: 3
+    lr: 0.001
+  phase2:                           # phase 2 : on dégèle layer4 (fine-tuning), lr 10 fois plus petit
+    epochs: 5
+    lr: 0.0001
+  scheduler_factor: 0.5             # ReduceLROnPlateau : lr x 0,5 ...
+  scheduler_patience: 1             # ... après 1 epoch sans amélioration de la loss de validation
+  early_stopping_patience: 3        # arrêt de la phase après 3 epochs sans amélioration
+  early_stopping_min_delta: 0.0001  # amélioration minimale de la loss de validation
+  checkpoint_path: models/best.pt   # meilleur modèle : poids + noms des classes (hors git)
+  figures_dir: docs/figures         # courbes d'apprentissage enregistrées en image
+  mlflow_experiment: brain-tumor-classifier
+  mlflow_dir: mlruns                # suivi des expériences MLflow (hors git)
