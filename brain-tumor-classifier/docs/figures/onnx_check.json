@@ -1,0 +1,29 @@
+{
+  "opset": 20,
+  "versions": {
+    "onnx": "1.23.2",
+    "onnxruntime": "1.31.1"
+  },
+  "fp32_vs_pytorch": {
+    "images": 20,
+    "max_prob_gap": 7.152557373046875e-07,
+    "max_cam_gap": 2.5779008865356445e-06,
+    "prob_gap_ok": true,
+    "cam_gap_ok": true
+  },
+  "test_set": {
+    "images": 1584,
+    "accuracy_fp32": 94.38131313131314,
+    "accuracy_int8": 93.3080808080808,
+    "mean_prob_gap": 0.015921215601030683,
+    "max_mean_prob_gap_per_image": 0.434442937374115,
+    "mean_cam_correlation": 0.9592879713806306
+  },
+  "accuracy_drop_points": 1.0732323232323324,
+  "size_mb": {
+    "fp32": 94.204641,
+    "int8": 24.264148
+  },
+  "rule": "int8 si baisse <= 0.5 point et corrélation > 0.95",
+  "recommended": "fp32"
+}
