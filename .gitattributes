@@ -1,0 +1,12 @@
+# Fins de ligne : tout est stocké avec LF dans le dépôt (Windows, macOS et Linux voient la même chose).
+* text=auto eol=lf
+
+# Fichiers binaires : jamais convertis
+*.jpg binary
+*.jpeg binary
+*.png binary
+*.gif binary
+*.ico binary
+*.woff2 binary
+*.safetensors binary
+*.pt binary
