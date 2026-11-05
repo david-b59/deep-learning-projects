@@ -50,7 +50,7 @@ export function ResultView({ prediction, imageUrl, truth }: ResultViewProps) {
             onChange={(event) => setOpacity(Number(event.target.value))}
             className="w-full accent-primary"
           />
-          <span className="w-10 text-right tabular-nums">{opacity} %</span>
+          <span className="w-12 text-right whitespace-nowrap tabular-nums">{opacity} %</span>
         </label>
         <p className="mx-auto max-w-md text-xs text-muted-foreground">
           Les zones rouges et jaunes sont celles qui ont le plus influencé le modèle. Elles ne
