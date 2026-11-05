@@ -1,12 +1,14 @@
 /**
- * Appels à l'API FastAPI du projet.
+ * Appels à l'API FastAPI du projet (mode serveur, utilisé avec Docker) et types communs.
  */
 
-/** Adresse de l'API : variable d'environnement VITE_API_URL, sinon le port 8000 en local. */
-export const API_URL: string = (import.meta.env.VITE_API_URL ?? "http://localhost:8000").replace(
-  /\/$/,
-  "",
-)
+/**
+ * Adresse de l'API : variable d'environnement VITE_API_URL.
+ * Non définie (ou vide), le site n'appelle aucune API : l'analyse se fait dans le navigateur.
+ */
+export const API_URL: string | undefined = import.meta.env.VITE_API_URL
+  ? String(import.meta.env.VITE_API_URL).replace(/\/$/, "")
+  : undefined
 
 /** Taille maximale acceptée par l'API (5 Mo), vérifiée aussi côté navigateur. */
 export const MAX_UPLOAD_BYTES = 5 * 1024 * 1024
@@ -27,7 +29,7 @@ export interface ClassScores {
   support: number
 }
 
-/** Réponse de `GET /metrics-summary` : scores du modèle sur le jeu de test. */
+/** Scores du modèle sur le jeu de test (contenu de `metrics.json`, écrit à la compilation). */
 export interface MetricsSummary {
   accuracy: number
   class_names: string[]
@@ -45,6 +47,7 @@ export class ApiError extends Error {}
  * @throws ApiError avec un message clair si l'image est refusée ou l'API injoignable.
  */
 export async function predict(file: File): Promise<Prediction> {
+  if (!API_URL) throw new ApiError("L'adresse de l'API n'est pas configurée.")
   if (file.size > MAX_UPLOAD_BYTES) {
     throw new ApiError("Fichier trop volumineux (5 Mo maximum).")
   }
@@ -64,20 +67,4 @@ export async function predict(file: File): Promise<Prediction> {
     throw new ApiError(detail ?? "Le serveur a rencontré un problème. Réessaie plus tard.")
   }
   return (await response.json()) as Prediction
-}
-
-/**
- * Récupère les scores du modèle sur le jeu de test (page « Résultats »).
- *
- * @throws ApiError si l'API est injoignable ou si les scores ne sont pas disponibles.
- */
-export async function fetchMetrics(): Promise<MetricsSummary> {
-  let response: Response
-  try {
-    response = await fetch(`${API_URL}/metrics-summary`)
-  } catch {
-    throw new ApiError("Impossible de joindre l'API. Est-elle démarrée ?")
-  }
-  if (!response.ok) throw new ApiError("Les scores du modèle ne sont pas disponibles.")
-  return (await response.json()) as MetricsSummary
 }
