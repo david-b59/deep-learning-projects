@@ -41,9 +41,18 @@ resultat = predictor.predict(Image.open("irm.jpg"))
 print(resultat.predicted_class, resultat.probabilities)
 ```
 
-Le dossier contient `model.safetensors` (poids), `config.json` (noms des classes, prétraitement,
-scores) et cette fiche. Entrée : image redimensionnée en 224 x 224, convertie en RGB, normalisée
-avec la moyenne et l'écart-type d'ImageNet.
+Le dossier contient `model.safetensors` (poids), `model.onnx` (le même modèle au format ONNX, pour
+le navigateur), `config.json` (noms des classes, prétraitement, scores) et cette fiche. Entrée :
+image redimensionnée en 224 x 224, convertie en RGB, normalisée avec la moyenne et l'écart-type
+d'ImageNet.
+
+### Format ONNX (navigateur)
+`model.onnx` (94 Mo, décimaux 32 bits) prend l'image prétraitée `[1, 3, 224, 224]` et renvoie deux
+sorties : `probs` `[1, 4]` (probabilités) et `cams` `[1, 4, 7, 7]` (cartes d'activation de chaque
+classe, à normaliser puis agrandir). Comme la dernière couche est linéaire après un pooling moyen,
+la carte Grad-CAM se calcule sans gradient. Vérifié contre PyTorch : écart maximal de probabilité
+de l'ordre de 1e-6. Une version quantifiée (int8, 24 Mo) a été testée puis écartée : elle perdait
+1,07 point d'accuracy sur le jeu de test (94,38 % → 93,31 %).
 
 ## Données
 - **Source** : *Brain Tumor MRI Dataset* de Masoud Nickparvar (Kaggle), licence **CC BY 4.0**.

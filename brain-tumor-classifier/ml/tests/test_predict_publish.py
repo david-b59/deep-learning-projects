@@ -209,3 +209,16 @@ def test_jet_colors_matches_matplotlib() -> None:
     ours = jet_colors(values) * 255
     reference = matplotlib.colormaps["jet"](values)[..., :3] * 255
     assert np.abs(ours - reference).max() <= 1
+
+
+@pytest.mark.slow
+def test_export_with_onnx_writes_the_onnx_file(
+    full_config: Config, checkpoint: Path, model_card: Path, tmp_path: Path
+) -> None:
+    """Avec ``with_onnx=True``, l'export contient aussi un ``model.onnx`` chargeable."""
+    import onnxruntime as ort
+
+    out = export_model(full_config, tmp_path / "export", model_card, with_onnx=True)
+    assert {p.name for p in out.iterdir()} == {WEIGHTS_NAME, CONFIG_NAME, "README.md", "model.onnx"}
+    session = ort.InferenceSession(str(out / "model.onnx"), providers=["CPUExecutionProvider"])
+    assert [o.name for o in session.get_outputs()] == ["probs", "cams"]
