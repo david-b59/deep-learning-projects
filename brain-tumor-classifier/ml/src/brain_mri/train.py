@@ -51,7 +51,13 @@ from tqdm import tqdm
 
 from brain_mri.config import Config, PhaseConfig, load_config
 from brain_mri.data import DataBundle, build_dataloaders
-from brain_mri.model import build_model, count_parameters, unfreeze_last_block
+from brain_mri.model import (
+    build_model,
+    count_parameters,
+    get_device,
+    load_checkpoint,  # noqa: F401  (réexporté : evaluate, publish et les tests l'importent d'ici)
+    unfreeze_last_block,
+)
 
 LOGGER = logging.getLogger(__name__)
 
@@ -76,11 +82,6 @@ def keep_awake(enabled: bool = True) -> Iterator[None]:
     finally:
         if active:
             ctypes.windll.kernel32.SetThreadExecutionState(0x80000000)  # ES_CONTINUOUS seul
-
-
-def get_device() -> torch.device:
-    """Choisit le GPU s'il est disponible, sinon le CPU."""
-    return torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 def set_frozen_batchnorm_eval(model: nn.Module) -> None:
@@ -210,19 +211,6 @@ def save_checkpoint(path: Path, model: nn.Module, class_names: list[str], info: 
     """
     path.parent.mkdir(parents=True, exist_ok=True)
     torch.save({"state_dict": model.state_dict(), "class_names": class_names, **info}, path)
-
-
-def load_checkpoint(path: Path, device: torch.device | str = "cpu") -> dict:
-    """Relit un fichier produit par :func:`save_checkpoint`.
-
-    Args:
-        path: Fichier à lire.
-        device: Appareil sur lequel charger les tenseurs.
-
-    Returns:
-        Le dictionnaire enregistré (``state_dict``, ``class_names``, etc.).
-    """
-    return torch.load(path, map_location=device, weights_only=True)
 
 
 def plot_curves(history: list[dict], path: Path) -> None:

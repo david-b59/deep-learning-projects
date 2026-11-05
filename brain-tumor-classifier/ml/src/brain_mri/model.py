@@ -12,6 +12,9 @@ Le nom ``fc`` a été lu dans ``print(model)``, il n'a pas été supposé.
 
 from __future__ import annotations
 
+from pathlib import Path
+
+import torch
 from torch import nn
 from torchvision import models
 from torchvision.models import ResNet50_Weights
@@ -71,3 +74,21 @@ def count_parameters(model: nn.Module) -> tuple[int, int]:
     total = sum(p.numel() for p in model.parameters())
     trainable = sum(p.numel() for p in model.parameters() if p.requires_grad)
     return trainable, total
+
+
+def get_device() -> torch.device:
+    """Choisit le GPU s'il est disponible, sinon le CPU."""
+    return torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+
+def load_checkpoint(path: Path, device: torch.device | str = "cpu") -> dict:
+    """Relit un fichier produit par :func:`save_checkpoint`.
+
+    Args:
+        path: Fichier à lire.
+        device: Appareil sur lequel charger les tenseurs.
+
+    Returns:
+        Le dictionnaire enregistré (``state_dict``, ``class_names``, etc.).
+    """
+    return torch.load(path, map_location=device, weights_only=True)

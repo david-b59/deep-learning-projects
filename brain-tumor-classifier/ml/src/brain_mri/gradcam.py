@@ -39,14 +39,14 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 import truststore
-from captum.attr import LayerAttribution, LayerGradCam
 from PIL import Image
 from torch import nn
 
 from brain_mri.config import Config, ModelConfig, load_config
-from brain_mri.data import build_dataloaders, build_transforms
-from brain_mri.model import build_model
-from brain_mri.train import get_device, load_checkpoint
+from brain_mri.data import build_dataloaders
+from brain_mri.explain import _normalize, gradcam_captum, upsample
+from brain_mri.model import build_model, get_device, load_checkpoint
+from brain_mri.transforms import build_transforms
 
 LOGGER = logging.getLogger(__name__)
 
@@ -95,19 +95,6 @@ def load_image(path: Path, config: Config) -> tuple[torch.Tensor, np.ndarray]:
     return tensor, display
 
 
-def _normalize(heatmap: torch.Tensor) -> torch.Tensor:
-    """Ramène une carte entre 0 et 1 en la divisant par son maximum (carte nulle : inchangée).
-
-    Args:
-        heatmap: Carte à valeurs positives.
-
-    Returns:
-        La carte normalisée.
-    """
-    peak = heatmap.max()
-    return heatmap / peak if peak > 0 else heatmap
-
-
 def gradcam_manual(
     model: nn.Module, x: torch.Tensor, target: int, layer: nn.Module | None = None
 ) -> torch.Tensor:
@@ -144,41 +131,6 @@ def gradcam_manual(
     weights = gradients.mean(dim=(1, 2))  # un poids par carte : moyenne de son gradient
     heatmap = (weights[:, None, None] * activations).mean(dim=0)  # somme pondérée des cartes
     return _normalize(torch.relu(heatmap))  # on ne garde que ce qui pousse vers la classe
-
-
-def gradcam_captum(
-    model: nn.Module, x: torch.Tensor, target: int, layer: nn.Module | None = None
-) -> torch.Tensor:
-    """Grad-CAM avec Captum (``LayerGradCam``).
-
-    Args:
-        model: Le modèle (en ``eval()``).
-        x: Une image prétraitée, forme ``(1, 3, H, W)``.
-        target: Indice de la classe à expliquer.
-        layer: Couche à observer (par défaut ``model.layer4``).
-
-    Returns:
-        La carte, forme ``(h, w)``, valeurs entre 0 et 1.
-    """
-    layer = layer if layer is not None else model.layer4
-    attribution = LayerGradCam(model, layer).attribute(x, target=target, relu_attributions=True)
-    return _normalize(attribution.detach()[0, 0])  # (1, 1, 7, 7) -> (7, 7)
-
-
-def upsample(heatmap: torch.Tensor, size: int) -> np.ndarray:
-    """Agrandit une carte 7 x 7 à la taille de l'image (interpolation bilinéaire).
-
-    Args:
-        heatmap: Carte ``(h, w)``.
-        size: Côté de l'image, en pixels.
-
-    Returns:
-        La carte ``(size, size)`` en NumPy, bornée entre 0 et 1.
-    """
-    big = LayerAttribution.interpolate(
-        heatmap[None, None], (size, size), interpolate_mode="bilinear"
-    )
-    return big[0, 0].clamp(0, 1).numpy()
 
 
 def predict_one(model: nn.Module, x: torch.Tensor) -> tuple[int, float]:

@@ -24,20 +24,17 @@ import logging
 from dataclasses import dataclass
 from pathlib import Path
 
-import matplotlib
 import numpy as np
 import torch
 import torch.nn.functional as F
-import truststore
 from PIL import Image
 from safetensors.torch import load_file
 from torch import nn
 
-from brain_mri.config import DataConfig, ModelConfig, load_config
-from brain_mri.data import build_transforms
-from brain_mri.gradcam import gradcam_captum, upsample
-from brain_mri.model import build_model
-from brain_mri.train import get_device, load_checkpoint
+from brain_mri.config import DataConfig, ModelConfig
+from brain_mri.explain import gradcam_captum, upsample
+from brain_mri.model import build_model, get_device, load_checkpoint
+from brain_mri.transforms import build_transforms
 
 LOGGER = logging.getLogger(__name__)
 
@@ -45,6 +42,41 @@ DISCLAIMER = "Démonstration technique, pas un dispositif médical."
 WEIGHTS_NAME = "model.safetensors"  # poids du modèle (format sans risque, pas de pickle)
 CONFIG_NAME = "config.json"  # classes, prétraitement, scores
 OVERLAY_ALPHA = 0.45  # opacité de la carte de chaleur sur l'IRM
+
+# Points de contrôle de la palette « jet » (positions, valeurs), par canal : ce sont ceux de
+# matplotlib, recopiés pour ne pas dépendre de cette bibliothèque (lourde) à la prédiction.
+_JET_RED = ([0.0, 0.35, 0.66, 0.89, 1.0], [0.0, 0.0, 1.0, 1.0, 0.5])
+_JET_GREEN = ([0.0, 0.125, 0.375, 0.64, 0.91, 1.0], [0.0, 0.0, 1.0, 1.0, 0.0, 0.0])
+_JET_BLUE = ([0.0, 0.11, 0.34, 0.65, 1.0], [0.5, 1.0, 1.0, 0.0, 0.0])
+_JET_LEVELS = 256  # nombre de couleurs de la palette
+
+
+def _build_jet_table() -> np.ndarray:
+    """Construit la table des 256 couleurs « jet » (RGB, valeurs 0-1) en NumPy.
+
+    Returns:
+        Un tableau ``(256, 3)`` : une couleur par niveau, du bleu foncé au rouge foncé.
+    """
+    positions = np.linspace(0.0, 1.0, _JET_LEVELS)
+    channels = (_JET_RED, _JET_GREEN, _JET_BLUE)
+    return np.stack([np.interp(positions, xs, ys) for xs, ys in channels], axis=1)
+
+
+JET_TABLE = _build_jet_table()  # calculée une seule fois à l'import
+
+
+def jet_colors(values: np.ndarray) -> np.ndarray:
+    """Convertit des valeurs 0-1 en couleurs RGB de la palette « jet ».
+
+    Args:
+        values: Valeurs entre 0 et 1, de forme quelconque.
+
+    Returns:
+        Les couleurs, de forme ``(*values.shape, 3)``, valeurs 0-1.
+    """
+    # Même découpage que matplotlib : 256 niveaux, la valeur 1.0 tombe dans le dernier.
+    indices = np.clip((np.asarray(values) * _JET_LEVELS).astype(int), 0, _JET_LEVELS - 1)
+    return JET_TABLE[indices]
 
 
 @dataclass(frozen=True)
@@ -70,7 +102,7 @@ def overlay_heatmap(
     Returns:
         L'image superposée, en RGB.
     """
-    colors = matplotlib.colormaps["jet"](heatmap)[..., :3]  # carte -> couleurs RGB (sans l'alpha)
+    colors = jet_colors(heatmap)  # carte -> couleurs RGB
     blended = (1 - alpha) * image + alpha * colors
     return Image.fromarray((blended.clip(0, 1) * 255).astype(np.uint8))
 
@@ -234,6 +266,11 @@ def main() -> None:
         "--save-overlay", type=Path, default=None, help="Enregistre le Grad-CAM (PNG)"
     )
     args = parser.parse_args()
+
+    # Imports ici : ces deux outils ne servent qu'en ligne de commande, pas à l'API.
+    import truststore
+
+    from brain_mri.config import load_config
 
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
     truststore.inject_into_ssl()
