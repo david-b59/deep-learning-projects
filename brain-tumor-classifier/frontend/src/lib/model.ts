@@ -89,7 +89,11 @@ export async function fetchModel(
 
   let response: Response
   try {
-    response = await fetch(MODEL_URL)
+    // « no-referrer » : le navigateur n'indique pas l'adresse de notre page à Hugging Face.
+    // Nécessaire : Hugging Face répond 404 (sans en-tête CORS, donc une erreur de sécurité côté
+    // navigateur) quand le « Referer » vient d'un domaine *.workers.dev, où le site est hébergé.
+    // Sans Referer, le fichier public est servi normalement ; c'est aussi plus discret.
+    response = await fetch(MODEL_URL, { referrerPolicy: "no-referrer" })
   } catch {
     throw new ModelError(
       "Impossible de télécharger le modèle. Vérifie ta connexion Internet puis réessaie.",
