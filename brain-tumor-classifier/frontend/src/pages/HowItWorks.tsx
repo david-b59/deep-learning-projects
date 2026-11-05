@@ -2,6 +2,7 @@
  * Page « Comment ça marche » : le trajet d'une IRM, du fichier envoyé à la carte de chaleur.
  */
 import { PageTitle } from "@/components/PageTitle"
+import { Reveal } from "@/components/Reveal"
 
 /** Étapes du fonctionnement, expliquées sans jargon. */
 const STEPS = [
@@ -36,10 +37,12 @@ export function HowItWorks() {
         intro="Du fichier envoyé à la carte de chaleur, en cinq étapes."
       />
       <ol className="grid gap-4 md:grid-cols-2">
-        {STEPS.map(({ title, text }) => (
-          <li key={title} className="rounded-xl border p-5">
-            <h2 className="font-heading text-lg font-semibold">{title}</h2>
-            <p className="mt-1 text-sm text-muted-foreground">{text}</p>
+        {STEPS.map(({ title, text }, index) => (
+          <li key={title}>
+            <Reveal delay={index * 0.08} className="h-full rounded-xl border p-5">
+              <h2 className="font-heading text-lg font-semibold">{title}</h2>
+              <p className="mt-1 text-sm text-muted-foreground">{text}</p>
+            </Reveal>
           </li>
         ))}
       </ol>
