@@ -42,3 +42,11 @@ def test_pick_examples_missing_folder_raises(tmp_path: Path) -> None:
     """Un jeu de test absent donne une erreur claire."""
     with pytest.raises(FileNotFoundError):
         pick_examples(tmp_path / "vide", tmp_path / "examples")
+
+
+def test_pick_examples_writes_manifest_to_custom_path(raw_dir: Path, tmp_path: Path) -> None:
+    """Le manifeste peut être écrit ailleurs que dans le dossier des images."""
+    target = tmp_path / "code" / "examples.json"
+    manifest = pick_examples(raw_dir, tmp_path / "examples", per_class=2, manifest_path=target)
+    assert json.loads(target.read_text(encoding="utf-8")) == manifest
+    assert not (tmp_path / "examples" / MANIFEST_NAME).exists()

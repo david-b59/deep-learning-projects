@@ -4,6 +4,8 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Précharge la police principale : évite que le texte « saute » quand elle arrive. -->
+    <link rel="preload" as="font" type="font/woff2" crossorigin href="/node_modules/@fontsource-variable/geist/files/geist-latin-wght-normal.woff2" />
     <title>Brain Tumor Classifier</title>
     <meta name="description" content="Une IA qui classe les IRM cérébrales en 4 catégories et explique sa décision. Démonstration technique, pas un dispositif médical." />
   </head>

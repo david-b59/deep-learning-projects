@@ -23,7 +23,13 @@ IMAGE_SUFFIXES = {".jpg", ".jpeg", ".png"}
 MANIFEST_NAME = "manifest.json"
 
 
-def pick_examples(raw_dir: Path, out_dir: Path, per_class: int = 6, seed: int = 42) -> list[dict]:
+def pick_examples(
+    raw_dir: Path,
+    out_dir: Path,
+    per_class: int = 6,
+    seed: int = 42,
+    manifest_path: Path | None = None,
+) -> list[dict]:
     """Copie ``per_class`` images de test au hasard par classe et écrit la liste (manifeste).
 
     Args:
@@ -31,6 +37,7 @@ def pick_examples(raw_dir: Path, out_dir: Path, per_class: int = 6, seed: int = 
         out_dir: Dossier de sortie (``frontend/public/examples``), vidé d'abord.
         per_class: Nombre d'images par classe.
         seed: Graine du tirage (même graine = mêmes images).
+        manifest_path: Où écrire la liste (manifeste) ; par défaut ``out_dir/manifest.json``.
 
     Returns:
         La liste des exemples : ``[{"label": classe, "src": "/examples/<fichier>"}, ...]``.
@@ -64,7 +71,9 @@ def pick_examples(raw_dir: Path, out_dir: Path, per_class: int = 6, seed: int = 
         shutil.copyfile(source, out_dir / target)
         manifest.append({"label": name, "src": f"/examples/{target}"})
 
-    (out_dir / MANIFEST_NAME).write_text(
+    target_manifest = manifest_path or out_dir / MANIFEST_NAME
+    target_manifest.parent.mkdir(parents=True, exist_ok=True)
+    target_manifest.write_text(
         json.dumps(manifest, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
     )
     return manifest
@@ -79,7 +88,9 @@ def main() -> None:
     out_dir = PROJECT_ROOT / "frontend" / "public" / "examples"
     # Un chemin relatif est résolu à partir de la racine du projet par DataConfig.
     raw_dir = DataConfig(raw_dir=Path("data/raw")).raw_dir
-    manifest = pick_examples(raw_dir, out_dir, args.per_class, args.seed)
+    # La liste est écrite dans le code du site (importée à la compilation) : pas de requête.
+    manifest_path = PROJECT_ROOT / "frontend" / "src" / "lib" / "examples.json"
+    manifest = pick_examples(raw_dir, out_dir, args.per_class, args.seed, manifest_path)
     print(f"{len(manifest)} images d'exemple copiées dans {out_dir}")
 
 

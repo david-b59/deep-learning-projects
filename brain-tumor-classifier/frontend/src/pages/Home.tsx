@@ -1,7 +1,7 @@
 /**
  * Page d'accueil : en 30 secondes, à quoi sert le projet et où voir le résultat.
  */
-import { lazy, Suspense, useState } from "react"
+import { lazy, Suspense, useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 
 import { ErrorBoundary } from "@/components/ErrorBoundary"
@@ -25,7 +25,10 @@ const POINTS = [
 function supportsWebGL(): boolean {
   try {
     const canvas = document.createElement("canvas")
-    return Boolean(canvas.getContext("webgl2") ?? canvas.getContext("webgl"))
+    const context = canvas.getContext("webgl2") ?? canvas.getContext("webgl")
+    // Libère tout de suite ce contexte de test : les navigateurs en limitent le nombre.
+    context?.getExtension("WEBGL_lose_context")?.loseContext()
+    return context !== null
   } catch {
     return false
   }
@@ -36,7 +39,26 @@ export function Home() {
   const { theme } = useTheme()
   const reduceMotion = useReducedMotion()
   // Calculé une seule fois : chaque test crée un contexte WebGL, qu'il ne faut pas multiplier.
-  const [showBrain] = useState(supportsWebGL)
+  const [webgl] = useState(supportsWebGL)
+  // Le cerveau n'est chargé qu'une fois la page affichée : le texte et les boutons passent d'abord.
+  const [pageLoaded, setPageLoaded] = useState(false)
+  useEffect(() => {
+    const start = () => setTimeout(() => setPageLoaded(true), 1500)
+    if (document.readyState === "complete") {
+      const timer = start()
+      return () => clearTimeout(timer)
+    }
+    let timer: ReturnType<typeof setTimeout> | undefined
+    const onLoad = () => {
+      timer = start()
+    }
+    window.addEventListener("load", onLoad, { once: true })
+    return () => {
+      window.removeEventListener("load", onLoad)
+      clearTimeout(timer)
+    }
+  }, [])
+  const showBrain = webgl && pageLoaded
 
   return (
     <div className="space-y-12">

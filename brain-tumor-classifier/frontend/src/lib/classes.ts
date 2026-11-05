@@ -1,3 +1,5 @@
+import examplesData from "@/lib/examples.json"
+
 /**
  * Les 4 classes du modèle : nom affiché, explication simple et images d'exemple.
  */
@@ -41,16 +43,12 @@ export interface Example {
 }
 
 /**
- * Charge la liste des images d'exemple (`public/examples/manifest.json`).
+ * Les images d'exemple, tirées au hasard dans le jeu de test.
  *
- * Cette liste est produite par `python -m brain_mri.examples` : images tirées au hasard dans le
- * jeu de test, sans regarder si le modèle les classe bien.
+ * La liste (`examples.json`) est produite par `python -m brain_mri.examples` et intégrée au site à
+ * la compilation : aucune requête supplémentaire, donc aucun décalage de la page au chargement.
  */
-export async function loadExamples(): Promise<Example[]> {
-  const response = await fetch("/examples/manifest.json")
-  if (!response.ok) throw new Error("Liste d'exemples introuvable")
-  return (await response.json()) as Example[]
-}
+export const EXAMPLES: Example[] = examplesData as Example[]
 
 /** Renvoie le nom lisible d'une classe (ou le nom brut si elle est inconnue). */
 export function classLabel(name: string): string {
