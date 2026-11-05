@@ -2,8 +2,10 @@
 
 Deux étapes, volontairement séparées :
     1. **Exporter** ``models/best.pt`` vers un dossier propre (``models/export/``) :
-       ``model.safetensors`` (les poids), ``config.json`` (classes, prétraitement, scores)
-       et ``README.md`` (la model card, copiée depuis ``docs/model_card.md``).
+       ``model.safetensors`` (les poids), ``model.onnx`` (le même modèle pour le navigateur,
+       avec la carte Grad-CAM : voir :mod:`brain_mri.export_onnx`), ``config.json`` (classes,
+       prétraitement, scores) et ``README.md`` (la model card, copiée depuis
+       ``docs/model_card.md``).
     2. **Publier** ce dossier sur le Hub, seulement si on le demande avec ``--push``.
 
 Pourquoi ``safetensors`` et pas ``.pt`` : un fichier ``.pt`` est un « pickle », qui peut
@@ -15,7 +17,7 @@ jamais commité).
 
 Utilisation (depuis ``brain-tumor-classifier/ml/``) ::
 
-    uv run python -m brain_mri.publish            # exporte seulement
+    uv run python -m brain_mri.publish            # exporte seulement (safetensors + ONNX)
     uv run python -m brain_mri.publish --push     # exporte puis publie
 """
 
@@ -51,6 +53,7 @@ def export_model(
     config: Config,
     out_dir: Path = DEFAULT_EXPORT_DIR,
     model_card: Path = DEFAULT_MODEL_CARD,
+    with_onnx: bool = False,
 ) -> Path:
     """Exporte le meilleur modèle vers un dossier prêt à publier.
 
@@ -58,6 +61,8 @@ def export_model(
         config: Configuration complète.
         out_dir: Dossier de sortie (créé si besoin, écrasé s'il existe déjà).
         model_card: Fichier Markdown de la fiche du modèle, copié en ``README.md``.
+        with_onnx: Si True, écrit aussi ``model.onnx`` (la démo du site le télécharge).
+            Faux par défaut : l'export ONNX prend une vingtaine de secondes.
 
     Returns:
         Le dossier exporté.
@@ -101,6 +106,12 @@ def export_model(
     (out_dir / CONFIG_NAME).write_text(
         json.dumps(description, indent=2, ensure_ascii=False), encoding="utf-8"
     )
+    if with_onnx:
+        # Import ici : onnx/onnxruntime viennent de l'extra « train », inutiles sans `with_onnx`.
+        from brain_mri.export_onnx import FP32_NAME, export_onnx, load_predictor
+
+        predictor = load_predictor(config)
+        export_onnx(predictor.model, out_dir / FP32_NAME, predictor.image_size)
     shutil.copyfile(
         model_card, out_dir / "README.md"
     )  # le Hub affiche README.md comme page du modèle
@@ -170,7 +181,7 @@ def main() -> None:
 
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
     truststore.inject_into_ssl()
-    folder = export_model(load_config())
+    folder = export_model(load_config(), with_onnx=True)
     print(f"Dossier exporté : {folder}")
     for file in sorted(folder.iterdir()):
         print(f"  {file.name:<18} {file.stat().st_size / 1e6:8.2f} Mo")
