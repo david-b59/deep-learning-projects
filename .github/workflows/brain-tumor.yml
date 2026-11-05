@@ -1,0 +1,136 @@
+# =============================================================================
+# CI du projet brain-tumor-classifier.
+# 4 jobs indépendants : ml (ruff + pytest), api (ruff + pytest),
+# front (lint + build) et docker (construction des 2 images, sans publication).
+# Aucun secret n'est nécessaire : les tests utilisent un faux jeu de données
+# créé dans un dossier temporaire, et le modèle de l'API vient d'un dépôt
+# Hugging Face public.
+# =============================================================================
+name: Brain Tumor CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "brain-tumor-classifier/**"
+      - ".github/workflows/brain-tumor.yml"
+  pull_request:
+    paths:
+      - "brain-tumor-classifier/**"
+      - ".github/workflows/brain-tumor.yml"
+
+# Droits minimaux : lecture seule du dépôt
+permissions:
+  contents: read
+
+# Une seule exécution par branche : une nouvelle annule l'ancienne devenue obsolète
+concurrency:
+  group: brain-tumor-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ---- Pipeline d'entraînement (paquet brain_mri) ---------------------------
+  ml:
+    name: ml (ruff + pytest)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: brain-tumor-classifier/ml
+    steps:
+      - uses: actions/checkout@v7
+      - name: Installer uv (avec cache)
+        uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          version: "0.13.7"
+          enable-cache: true
+          python-version: "3.12"
+      - name: Installer les dépendances (avec l'extra d'entraînement)
+        run: uv sync --locked --extra train
+      - name: Vérifier le code (ruff)
+        run: uv run ruff check src tests
+      - name: Vérifier le formatage (ruff)
+        run: uv run ruff format --check src tests
+      - name: Lancer les tests
+        run: uv run pytest -q
+
+  # ---- API FastAPI ----------------------------------------------------------
+  api:
+    name: api (ruff + pytest)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: brain-tumor-classifier/api
+    steps:
+      - uses: actions/checkout@v7
+      - name: Installer uv (avec cache)
+        uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          version: "0.13.7"
+          enable-cache: true
+          python-version: "3.12"
+      - name: Installer les dépendances
+        run: uv sync --locked
+      - name: Vérifier le code (ruff)
+        run: uv run ruff check .
+      - name: Vérifier le formatage (ruff)
+        run: uv run ruff format --check .
+      - name: Lancer les tests
+        run: uv run pytest -q
+
+  # ---- Application web React ------------------------------------------------
+  front:
+    name: front (lint + build)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: brain-tumor-classifier/frontend
+    steps:
+      - uses: actions/checkout@v7
+      - name: Installer Node.js (avec cache npm)
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: brain-tumor-classifier/frontend/package-lock.json
+      - name: Installer les dépendances
+        run: npm ci
+      - name: Vérifier le code (oxlint)
+        run: npm run lint
+      - name: Compiler le site
+        run: npm run build
+
+  # ---- Images Docker (construites mais jamais publiées) ----------------------
+  docker:
+    name: docker (build des images)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: brain-tumor-classifier
+    steps:
+      - uses: actions/checkout@v7
+      - name: Préparer Docker Buildx
+        uses: docker/setup-buildx-action@v4
+      # Le build télécharge le modèle depuis le dépôt Hugging Face public : c'est voulu
+      - name: Construire l'image de l'API
+        uses: docker/build-push-action@v7
+        with:
+          context: brain-tumor-classifier
+          file: brain-tumor-classifier/api/Dockerfile
+          push: false
+          load: false
+          cache-from: type=gha,scope=api
+          cache-to: type=gha,scope=api,mode=max
+      - name: Construire l'image du site
+        uses: docker/build-push-action@v7
+        with:
+          context: brain-tumor-classifier/frontend
+          push: false
+          load: false
+          cache-from: type=gha,scope=front
+          cache-to: type=gha,scope=front,mode=max
+      - name: Valider le fichier docker-compose
+        run: docker compose -f docker-compose.yml config -q
