@@ -1,0 +1,14 @@
+// Configuration du déploiement sur Cloudflare (Workers, fichiers statiques).
+// Cloudflare construit le site (`npm run build`) puis publie le dossier `dist`.
+// Le nom doit être identique à celui du projet créé dans le tableau de bord Cloudflare.
+{
+  "name": "brain-tumor-classifier",
+  "compatibility_date": "2026-11-05",
+  "assets": {
+    // Dossier produit par `npm run build`
+    "directory": "./dist",
+    // Site React à routes côté navigateur : toute adresse inconnue (ex. /demo rechargée)
+    // renvoie index.html au lieu d'une erreur 404.
+    "not_found_handling": "single-page-application"
+  }
+}

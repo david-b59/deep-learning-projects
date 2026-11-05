@@ -1,0 +1,10 @@
+# En-têtes HTTP ajoutés par Cloudflare à toutes les réponses du site.
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: DENY
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+
+# Fichiers à nom haché (changent de nom à chaque version) : cache d'un an
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
