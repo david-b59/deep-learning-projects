@@ -31,13 +31,26 @@ export const CLASS_INFO: Record<ClassName, ClassInfo> = {
   },
 }
 
-/** Images d'exemple (tirées du jeu de test, donc jamais vues à l'entraînement). */
-export const EXAMPLES: { name: ClassName; src: string }[] = [
-  { name: "glioma", src: "/examples/glioma.jpg" },
-  { name: "meningioma", src: "/examples/meningioma.jpg" },
-  { name: "notumor", src: "/examples/notumor.jpg" },
-  { name: "pituitary", src: "/examples/pituitary.jpg" },
-]
+/** Les classes dans l'ordre d'affichage. */
+export const CLASS_ORDER: ClassName[] = ["glioma", "meningioma", "notumor", "pituitary"]
+
+/** Une image d'exemple : sa vraie classe et son adresse. */
+export interface Example {
+  label: ClassName
+  src: string
+}
+
+/**
+ * Charge la liste des images d'exemple (`public/examples/manifest.json`).
+ *
+ * Cette liste est produite par `python -m brain_mri.examples` : images tirées au hasard dans le
+ * jeu de test, sans regarder si le modèle les classe bien.
+ */
+export async function loadExamples(): Promise<Example[]> {
+  const response = await fetch("/examples/manifest.json")
+  if (!response.ok) throw new Error("Liste d'exemples introuvable")
+  return (await response.json()) as Example[]
+}
 
 /** Renvoie le nom lisible d'une classe (ou le nom brut si elle est inconnue). */
 export function classLabel(name: string): string {

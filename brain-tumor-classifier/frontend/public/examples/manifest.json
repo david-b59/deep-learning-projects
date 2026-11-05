@@ -1,0 +1,98 @@
+[
+  {
+    "label": "glioma",
+    "src": "/examples/glioma_01.jpg"
+  },
+  {
+    "label": "glioma",
+    "src": "/examples/glioma_02.jpg"
+  },
+  {
+    "label": "glioma",
+    "src": "/examples/glioma_03.jpg"
+  },
+  {
+    "label": "glioma",
+    "src": "/examples/glioma_04.jpg"
+  },
+  {
+    "label": "glioma",
+    "src": "/examples/glioma_05.jpg"
+  },
+  {
+    "label": "glioma",
+    "src": "/examples/glioma_06.jpg"
+  },
+  {
+    "label": "meningioma",
+    "src": "/examples/meningioma_01.jpg"
+  },
+  {
+    "label": "meningioma",
+    "src": "/examples/meningioma_02.jpg"
+  },
+  {
+    "label": "meningioma",
+    "src": "/examples/meningioma_03.jpg"
+  },
+  {
+    "label": "meningioma",
+    "src": "/examples/meningioma_04.jpg"
+  },
+  {
+    "label": "meningioma",
+    "src": "/examples/meningioma_05.jpg"
+  },
+  {
+    "label": "meningioma",
+    "src": "/examples/meningioma_06.jpg"
+  },
+  {
+    "label": "notumor",
+    "src": "/examples/notumor_01.jpg"
+  },
+  {
+    "label": "notumor",
+    "src": "/examples/notumor_02.jpg"
+  },
+  {
+    "label": "notumor",
+    "src": "/examples/notumor_03.jpg"
+  },
+  {
+    "label": "notumor",
+    "src": "/examples/notumor_04.jpg"
+  },
+  {
+    "label": "notumor",
+    "src": "/examples/notumor_05.jpg"
+  },
+  {
+    "label": "notumor",
+    "src": "/examples/notumor_06.jpg"
+  },
+  {
+    "label": "pituitary",
+    "src": "/examples/pituitary_01.jpg"
+  },
+  {
+    "label": "pituitary",
+    "src": "/examples/pituitary_02.jpg"
+  },
+  {
+    "label": "pituitary",
+    "src": "/examples/pituitary_03.jpg"
+  },
+  {
+    "label": "pituitary",
+    "src": "/examples/pituitary_04.jpg"
+  },
+  {
+    "label": "pituitary",
+    "src": "/examples/pituitary_05.jpg"
+  },
+  {
+    "label": "pituitary",
+    "src": "/examples/pituitary_06.jpg"
+  }
+]

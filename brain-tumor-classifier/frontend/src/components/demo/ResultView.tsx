@@ -12,10 +12,12 @@ interface ResultViewProps {
   prediction: Prediction
   /** Adresse (URL locale) de l'IRM envoyée, affichée sous la carte. */
   imageUrl: string
+  /** Vraie classe de l'image, connue seulement pour les exemples du site. */
+  truth?: ClassName
 }
 
 /** Affiche la décision, les barres de probabilités et l'IRM avec la carte de chaleur. */
-export function ResultView({ prediction, imageUrl }: ResultViewProps) {
+export function ResultView({ prediction, imageUrl, truth }: ResultViewProps) {
   // Opacité de la carte Grad-CAM (0 = IRM seule, 100 = IRM avec la chaleur au maximum).
   const [opacity, setOpacity] = useState(70)
   const { predicted_class: predicted, probabilities } = prediction
@@ -64,6 +66,14 @@ export function ResultView({ prediction, imageUrl }: ResultViewProps) {
             avec {(confidence * 100).toFixed(1).replace(".", ",")} % de confiance
           </p>
           {description && <p className="mt-2 text-sm">{description}</p>}
+          {truth && (
+            <p className="mt-3 rounded-lg border p-3 text-sm">
+              Vraie classe de cet exemple : <strong>{classLabel(truth)}</strong>.{" "}
+              {truth === predicted
+                ? "Le modèle a bien classé cette image."
+                : "Le modèle s'est trompé sur cette image."}
+            </p>
+          )}
         </div>
         <ProbabilityBars probabilities={probabilities} predicted={predicted} />
         <p className="rounded-xl bg-muted p-4 text-sm">{prediction.disclaimer}</p>
