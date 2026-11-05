@@ -1,0 +1,17 @@
+# Données, modèles et résultats d'entraînement : jamais dans l'image
+**/data
+**/models
+**/mlruns
+**/processed
+**/raw
+**/.venv
+**/node_modules
+**/dist
+**/.env
+**/.env.*
+!**/.env.example
+docs
+.git
+**/__pycache__
+**/.pytest_cache
+**/.ruff_cache

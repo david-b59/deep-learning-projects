@@ -1,0 +1,30 @@
+# Lance l'API (port 8000) et le site (port 8080) :
+#   docker compose up --build   puis ouvrir http://localhost:8080
+services:
+  api:
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      # Adresse du site autorisée à appeler l'API
+      CORS_ORIGIN: http://localhost:8080
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=4)"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  front:
+    build:
+      context: ./frontend
+      args:
+        # Adresse de l'API vue par le navigateur
+        VITE_API_URL: http://localhost:8000
+    ports:
+      - "8080:80"
+    depends_on:
+      api:
+        condition: service_healthy

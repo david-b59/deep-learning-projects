@@ -39,6 +39,8 @@ testpaths = ["tests"]
 
 [tool.uv.sources]
 brain-mri = { path = "../ml" }
+torch = { index = "pytorch-cpu", marker = "sys_platform == 'linux'" }
+torchvision = { index = "pytorch-cpu", marker = "sys_platform == 'linux'" }
 
 [dependency-groups]
 dev = [
@@ -48,3 +50,10 @@ dev = [
     "safetensors>=0.8.0",
     "torch>=2.15.0",
 ]
+
+# PyTorch CPU sous Linux (Docker) : sans cela, uv installe les roues CUDA (plusieurs Go).
+# Sous Windows et macOS, on garde PyPI.
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
