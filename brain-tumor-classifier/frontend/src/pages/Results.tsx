@@ -1,14 +1,17 @@
 /**
  * Page « Résultats » : scores du modèle sur le jeu de test, matrice de confusion et limites.
  *
- * Les chiffres viennent de l'API (`/metrics-summary`), donc du modèle réellement publié.
+ * Les chiffres sont intégrés au site à la compilation (`lib/metrics.json`, écrit par
+ * `ml/src/brain_mri/frontend_data.py` à partir de `docs/figures/evaluation.json`) : aucune API nécessaire.
  */
-import { useEffect, useState } from "react"
-
 import { PageTitle } from "@/components/PageTitle"
-import { ApiError, fetchMetrics, type MetricsSummary } from "@/lib/api"
+import type { MetricsSummary } from "@/lib/api"
 import { classLabel } from "@/lib/classes"
+import metricsData from "@/lib/metrics.json"
 import { cn } from "@/lib/utils"
+
+/** Scores du modèle sur le jeu de test, lus dans le JSON intégré au site. */
+const metrics: MetricsSummary = metricsData
 
 /** Limites connues du modèle, dites sans détour (reprises de la fiche du modèle). */
 const LIMITS = [
@@ -85,16 +88,6 @@ function ConfusionMatrix({ metrics }: { metrics: MetricsSummary }) {
 
 /** Page des résultats : chiffre clé, scores par classe, matrice et limites. */
 export function Results() {
-  const [metrics, setMetrics] = useState<MetricsSummary | null>(null)
-  const [error, setError] = useState<string | null>(null)
-
-  // Charge les scores une seule fois, à l'ouverture de la page.
-  useEffect(() => {
-    fetchMetrics()
-      .then(setMetrics)
-      .catch((e) => setError(e instanceof ApiError ? e.message : "Une erreur est survenue."))
-  }, [])
-
   return (
     <>
       <PageTitle
@@ -102,70 +95,61 @@ export function Results() {
         intro="Les performances du modèle sur 1 584 images de test, utilisées une seule fois, à la fin."
       />
 
-      {error && (
-        <p role="alert" className="mb-8 text-destructive">
-          {error}
-        </p>
-      )}
-      {!metrics && !error && <p className="mb-8 text-muted-foreground">Chargement…</p>}
+      <div className="space-y-10">
+        <section aria-label="Résultat global" className="rounded-xl border p-6">
+          <p className="font-heading text-5xl font-semibold tabular-nums">
+            {percent(metrics.accuracy)}
+          </p>
+          <p className="mt-1 text-muted-foreground">
+            d'images de test bien classées. Sur les données de validation (qui ont servi à
+            choisir le modèle), le score était de 97,7 % : le chiffre à retenir est celui du
+            test.
+          </p>
+        </section>
 
-      {metrics && (
-        <div className="space-y-10">
-          <section aria-label="Résultat global" className="rounded-xl border p-6">
-            <p className="font-heading text-5xl font-semibold tabular-nums">
-              {percent(metrics.accuracy)}
-            </p>
-            <p className="mt-1 text-muted-foreground">
-              d'images de test bien classées. Sur les données de validation (qui ont servi à
-              choisir le modèle), le score était de 97,7 % : le chiffre à retenir est celui du
-              test.
-            </p>
-          </section>
+        <section aria-label="Scores par catégorie" className="space-y-3">
+          <h2 className="font-heading text-xl font-semibold">Par catégorie</h2>
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[28rem] border-collapse text-sm">
+              <thead>
+                <tr className="text-left">
+                  <th scope="col" className="p-2 font-medium">Catégorie</th>
+                  <th scope="col" className="p-2 text-right font-medium">Précision</th>
+                  <th scope="col" className="p-2 text-right font-medium">Rappel</th>
+                  <th scope="col" className="p-2 text-right font-medium">F1</th>
+                  <th scope="col" className="p-2 text-right font-medium">Images</th>
+                </tr>
+              </thead>
+              <tbody>
+                {metrics.class_names.map((name) => {
+                  const s = metrics.per_class[name]
+                  return (
+                    <tr key={name} className="border-t">
+                      <th scope="row" className="p-2 text-left font-medium">
+                        {classLabel(name)}
+                      </th>
+                      <td className="p-2 text-right tabular-nums">{score(s.precision)}</td>
+                      <td className="p-2 text-right tabular-nums">{score(s.recall)}</td>
+                      <td className="p-2 text-right tabular-nums">{score(s.f1)}</td>
+                      <td className="p-2 text-right tabular-nums">{s.support}</td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
+          <p className="text-sm text-muted-foreground">
+            La précision dit « quand le modèle annonce cette catégorie, a-t-il raison ? ». Le
+            rappel dit « parmi les vraies images de cette catégorie, combien le modèle
+            retrouve-t-il ? ». Le F1 les résume.
+          </p>
+        </section>
 
-          <section aria-label="Scores par catégorie" className="space-y-3">
-            <h2 className="font-heading text-xl font-semibold">Par catégorie</h2>
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-[28rem] border-collapse text-sm">
-                <thead>
-                  <tr className="text-left">
-                    <th scope="col" className="p-2 font-medium">Catégorie</th>
-                    <th scope="col" className="p-2 text-right font-medium">Précision</th>
-                    <th scope="col" className="p-2 text-right font-medium">Rappel</th>
-                    <th scope="col" className="p-2 text-right font-medium">F1</th>
-                    <th scope="col" className="p-2 text-right font-medium">Images</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {metrics.class_names.map((name) => {
-                    const s = metrics.per_class[name]
-                    return (
-                      <tr key={name} className="border-t">
-                        <th scope="row" className="p-2 text-left font-medium">
-                          {classLabel(name)}
-                        </th>
-                        <td className="p-2 text-right tabular-nums">{score(s.precision)}</td>
-                        <td className="p-2 text-right tabular-nums">{score(s.recall)}</td>
-                        <td className="p-2 text-right tabular-nums">{score(s.f1)}</td>
-                        <td className="p-2 text-right tabular-nums">{s.support}</td>
-                      </tr>
-                    )
-                  })}
-                </tbody>
-              </table>
-            </div>
-            <p className="text-sm text-muted-foreground">
-              La précision dit « quand le modèle annonce cette catégorie, a-t-il raison ? ». Le
-              rappel dit « parmi les vraies images de cette catégorie, combien le modèle
-              retrouve-t-il ? ». Le F1 les résume.
-            </p>
-          </section>
-
-          <section aria-label="Matrice de confusion" className="space-y-3">
-            <h2 className="font-heading text-xl font-semibold">Où le modèle se trompe</h2>
-            <ConfusionMatrix metrics={metrics} />
-          </section>
-        </div>
-      )}
+        <section aria-label="Matrice de confusion" className="space-y-3">
+          <h2 className="font-heading text-xl font-semibold">Où le modèle se trompe</h2>
+          <ConfusionMatrix metrics={metrics} />
+        </section>
+      </div>
 
       <section aria-label="Limites" className="mt-10 space-y-3">
         <h2 className="font-heading text-xl font-semibold">Les limites à connaître</h2>

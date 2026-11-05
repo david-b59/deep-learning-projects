@@ -1,7 +1,7 @@
 # =============================================================================
 # CI du projet brain-tumor-classifier.
 # 4 jobs indépendants : ml (ruff + pytest), api (ruff + pytest),
-# front (lint + build) et docker (construction des 2 images, sans publication).
+# front (lint + tests + build) et docker (construction des 2 images, sans publication).
 # Aucun secret n'est nécessaire : les tests utilisent un faux jeu de données
 # créé dans un dossier temporaire, et le modèle de l'API vient d'un dépôt
 # Hugging Face public.
@@ -99,6 +99,8 @@ jobs:
         run: npm ci
       - name: Vérifier le code (oxlint)
         run: npm run lint
+      - name: Tester les fonctions d'inférence (Vitest)
+        run: npm test
       - name: Compiler le site
         run: npm run build
 

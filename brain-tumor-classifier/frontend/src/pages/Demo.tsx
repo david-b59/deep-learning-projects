@@ -7,15 +7,51 @@ import { Dropzone } from "@/components/demo/Dropzone"
 import { ResultView } from "@/components/demo/ResultView"
 import { PageTitle } from "@/components/PageTitle"
 import { Button } from "@/components/ui/button"
-import { ApiError, predict, type Prediction } from "@/lib/api"
+import { ApiError, type Prediction } from "@/lib/api"
+import { BROWSER_MODE, classify, type Status } from "@/lib/classify"
 import { CLASS_ORDER, classLabel, EXAMPLES, type ClassName, type Example } from "@/lib/classes"
 
 /** État de la page : rien envoyé, analyse en cours, résultat, ou erreur. */
 type State =
   | { step: "idle" }
-  | { step: "loading" }
+  | { step: "loading"; status: Status }
   | { step: "done"; prediction: Prediction; imageUrl: string; truth?: ClassName }
   | { step: "error"; message: string }
+
+/** Étape de départ affichée dès qu'une analyse démarre. */
+const START: Status = { phase: "analysis" }
+
+/**
+ * Message d'attente accessible : texte de l'étape et, pendant le téléchargement du modèle,
+ * barre de progression (ou texte seul si le total est inconnu).
+ */
+function LoadingMessage({ status }: { status: Status }) {
+  if (status.phase === "analysis") {
+    return <p className="text-muted-foreground">Analyse en cours…</p>
+  }
+  const percent = status.percent === null ? null : Math.round(status.percent)
+  return (
+    <div className="space-y-2">
+      <p className="text-muted-foreground">
+        Téléchargement du modèle (94 Mo){percent === null ? "" : ` : ${percent} %`} — une seule
+        fois, il reste ensuite dans le navigateur.
+      </p>
+      <div
+        role="progressbar"
+        aria-label="Téléchargement du modèle"
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={percent ?? undefined}
+        className="h-2 w-full max-w-md overflow-hidden rounded-full bg-muted"
+      >
+        <div
+          className={`h-full bg-primary transition-[width] ${percent === null ? "w-1/3 animate-pulse" : ""}`}
+          style={percent === null ? undefined : { width: `${percent}%` }}
+        />
+      </div>
+    </div>
+  )
+}
 
 /** Page de démonstration complète : dépôt d'image, exemples, analyse et résultat. */
 export function Demo() {
@@ -28,11 +64,11 @@ export function Demo() {
     }
   }, [state])
 
-  /** Envoie le fichier à l'API et met à jour l'état selon la réponse. */
+  /** Analyse le fichier (API ou navigateur) et met à jour l'état selon le résultat. */
   const analyse = async (file: File, truth?: ClassName) => {
-    setState({ step: "loading" })
+    setState({ step: "loading", status: START })
     try {
-      const prediction = await predict(file)
+      const prediction = await classify(file, (status) => setState({ step: "loading", status }))
       setState({ step: "done", prediction, imageUrl: URL.createObjectURL(file), truth })
     } catch (error) {
       const message = error instanceof ApiError ? error.message : "Une erreur est survenue."
@@ -42,7 +78,7 @@ export function Demo() {
 
   /** Télécharge une image d'exemple du site puis l'analyse comme un fichier choisi. */
   const analyseExample = async (example: Example) => {
-    setState({ step: "loading" })
+    setState({ step: "loading", status: START })
     try {
       const blob = await (await fetch(example.src)).blob()
       const name = example.src.split("/").pop() ?? "exemple.jpg"
@@ -81,8 +117,14 @@ export function Demo() {
             cérébrales du même type que les exemples ci-dessous.
           </p>
 
+          {BROWSER_MODE && (
+            <p className="text-xs text-muted-foreground">
+              L'image est analysée sur ton appareil : elle n'est envoyée nulle part.
+            </p>
+          )}
+
           <div aria-live="polite" className="min-h-6">
-            {state.step === "loading" && <p className="text-muted-foreground">Analyse en cours…</p>}
+            {state.step === "loading" && <LoadingMessage status={state.status} />}
             {state.step === "error" && (
               <p role="alert" className="text-destructive">
                 {state.message}
