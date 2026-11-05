@@ -1,7 +1,6 @@
 /**
  * Racine de l'application : thème, routeur et liste des pages.
  */
-import { MotionConfig } from "motion/react"
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom"
 
 import { Layout } from "@/components/layout/Layout"
@@ -16,21 +15,18 @@ import { Results } from "@/pages/Results"
 export default function App() {
   return (
     <ThemeProvider>
-      {/* reducedMotion="user" : les animations s'adaptent à la préférence du système. */}
-      <MotionConfig reducedMotion="user">
-        <BrowserRouter>
-          <Routes>
-            <Route element={<Layout />}>
-              <Route index element={<Home />} />
-              <Route path="demo" element={<Demo />} />
-              <Route path="comment-ca-marche" element={<HowItWorks />} />
-              <Route path="resultats" element={<Results />} />
-              <Route path="a-propos" element={<About />} />
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Route>
-          </Routes>
-        </BrowserRouter>
-      </MotionConfig>
+      <BrowserRouter>
+        <Routes>
+          <Route element={<Layout />}>
+            <Route index element={<Home />} />
+            <Route path="demo" element={<Demo />} />
+            <Route path="comment-ca-marche" element={<HowItWorks />} />
+            <Route path="resultats" element={<Results />} />
+            <Route path="a-propos" element={<About />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
     </ThemeProvider>
   )
 }

@@ -1,10 +1,14 @@
 /**
  * Apparition en fondu avec léger glissement quand un élément entre dans l'écran.
  *
- * La préférence « moins d'animations » du système est respectée (voir `MotionConfig` dans App.tsx).
+ * Réalisé en CSS pur : un `IntersectionObserver` (API du navigateur) détecte l'arrivée à
+ * l'écran, puis une transition CSS fait l'animation. Aucune bibliothèque d'animation n'est
+ * nécessaire, ce qui garde le site léger. Si le visiteur préfère moins d'animations (réglage
+ * du système), l'élément est affiché tout de suite, sans mouvement.
  */
-import { motion } from "motion/react"
-import type { ReactNode } from "react"
+import { useEffect, useRef, useState, type ReactNode } from "react"
+
+import { cn } from "@/lib/utils"
 
 interface RevealProps {
   children: ReactNode
@@ -13,17 +17,40 @@ interface RevealProps {
   className?: string
 }
 
-/** Enveloppe un contenu qui apparaît une seule fois au défilement. */
+/** Enveloppe un contenu qui apparaît une seule fois, au défilement. */
 export function Reveal({ children, delay = 0, className }: RevealProps) {
+  const ref = useRef<HTMLDivElement>(null)
+  const [shown, setShown] = useState(false)
+
+  useEffect(() => {
+    const element = ref.current
+    if (!element) return
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShown(true)
+          observer.disconnect() // l'animation ne se joue qu'une fois
+        }
+      },
+      { rootMargin: "0px 0px -40px 0px" },
+    )
+    observer.observe(element)
+    return () => observer.disconnect()
+  }, [])
+
   return (
-    <motion.div
-      className={className}
-      initial={{ opacity: 0, y: 16 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-40px" }}
-      transition={{ duration: 0.5, delay, ease: "easeOut" }}
+    <div
+      ref={ref}
+      className={cn(
+        className,
+        "transition duration-500 ease-out motion-reduce:transition-none",
+        shown
+          ? "translate-y-0 opacity-100"
+          : "translate-y-4 opacity-0 motion-reduce:translate-y-0 motion-reduce:opacity-100",
+      )}
+      style={{ transitionDelay: `${delay}s` }}
     >
       {children}
-    </motion.div>
+    </div>
   )
 }

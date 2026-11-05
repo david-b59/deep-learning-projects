@@ -8,13 +8,7 @@ import { ResultView } from "@/components/demo/ResultView"
 import { PageTitle } from "@/components/PageTitle"
 import { Button } from "@/components/ui/button"
 import { ApiError, predict, type Prediction } from "@/lib/api"
-import {
-  CLASS_ORDER,
-  classLabel,
-  loadExamples,
-  type ClassName,
-  type Example,
-} from "@/lib/classes"
+import { CLASS_ORDER, classLabel, EXAMPLES, type ClassName, type Example } from "@/lib/classes"
 
 /** État de la page : rien envoyé, analyse en cours, résultat, ou erreur. */
 type State =
@@ -26,14 +20,6 @@ type State =
 /** Page de démonstration complète : dépôt d'image, exemples, analyse et résultat. */
 export function Demo() {
   const [state, setState] = useState<State>({ step: "idle" })
-  const [examples, setExamples] = useState<Example[]>([])
-
-  // Charge la liste des exemples une fois. En cas d'échec, la section est simplement masquée.
-  useEffect(() => {
-    loadExamples()
-      .then(setExamples)
-      .catch(() => setExamples([]))
-  }, [])
 
   // Libère l'adresse locale de l'image quand elle n'est plus affichée.
   useEffect(() => {
@@ -104,7 +90,7 @@ export function Demo() {
             )}
           </div>
 
-          {examples.length > 0 && (
+          {EXAMPLES.length > 0 && (
             <section aria-label="Images d'exemple" className="space-y-5">
               <div className="space-y-1">
                 <h2 className="font-heading text-lg font-semibold">Pas d'IRM sous la main ?</h2>
@@ -118,7 +104,7 @@ export function Demo() {
                 <div key={name} className="space-y-2">
                   <h3 className="text-sm font-medium">Vraie classe : {classLabel(name)}</h3>
                   <ul className="grid grid-cols-3 gap-3 sm:grid-cols-6">
-                    {examples
+                    {EXAMPLES
                       .filter((example) => example.label === name)
                       .map((example, index) => (
                         <li key={example.src}>
@@ -132,6 +118,10 @@ export function Demo() {
                             <img
                               src={example.src}
                               alt=""
+                              loading="lazy"
+                              decoding="async"
+                              width={512}
+                              height={512}
                               className="aspect-square w-full bg-black object-cover"
                             />
                           </button>
