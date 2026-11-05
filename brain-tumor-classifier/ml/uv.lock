@@ -292,19 +292,24 @@ source = { editable = "." }
 dependencies = [
     { name = "captum" },
     { name = "huggingface-hub" },
+    { name = "numpy" },
+    { name = "pillow" },
+    { name = "pydantic" },
+    { name = "pyyaml" },
+    { name = "safetensors" },
+    { name = "torch" },
+    { name = "torchvision" },
+]
+
+[package.optional-dependencies]
+train = [
     { name = "kaggle" },
     { name = "matplotlib" },
     { name = "mlflow" },
-    { name = "numpy" },
     { name = "pandas" },
-    { name = "pydantic" },
     { name = "python-dotenv" },
-    { name = "pyyaml" },
-    { name = "safetensors" },
     { name = "scikit-learn" },
     { name = "six" },
-    { name = "torch" },
-    { name = "torchvision" },
     { name = "tqdm" },
     { name = "truststore" },
 ]
@@ -322,22 +327,24 @@ dev = [
 requires-dist = [
     { name = "captum", specifier = ">=0.9.0" },
     { name = "huggingface-hub", specifier = ">=2.4.0" },
-    { name = "kaggle", specifier = ">=2.2.5" },
-    { name = "matplotlib", specifier = ">=3.11.2" },
-    { name = "mlflow", specifier = ">=3.17.2" },
+    { name = "kaggle", marker = "extra == 'train'", specifier = ">=2.2.5" },
+    { name = "matplotlib", marker = "extra == 'train'", specifier = ">=3.11.2" },
+    { name = "mlflow", marker = "extra == 'train'", specifier = ">=3.17.2" },
     { name = "numpy", specifier = ">=2.5.4" },
-    { name = "pandas", specifier = ">=3.1.0" },
+    { name = "pandas", marker = "extra == 'train'", specifier = ">=3.1.0" },
+    { name = "pillow", specifier = ">=13.0.0" },
     { name = "pydantic", specifier = ">=2.14.2" },
-    { name = "python-dotenv", specifier = ">=1.2.4" },
+    { name = "python-dotenv", marker = "extra == 'train'", specifier = ">=1.2.4" },
     { name = "pyyaml", specifier = ">=6.0.3" },
     { name = "safetensors", specifier = ">=0.8.0" },
-    { name = "scikit-learn", specifier = ">=1.9.1" },
-    { name = "six", specifier = ">=1.17.0" },
+    { name = "scikit-learn", marker = "extra == 'train'", specifier = ">=1.9.1" },
+    { name = "six", marker = "extra == 'train'", specifier = ">=1.17.0" },
     { name = "torch", specifier = ">=2.15.0" },
     { name = "torchvision", specifier = ">=0.29.2" },
-    { name = "tqdm", specifier = ">=4.70.1" },
-    { name = "truststore", specifier = ">=0.10.5" },
+    { name = "tqdm", marker = "extra == 'train'", specifier = ">=4.70.1" },
+    { name = "truststore", marker = "extra == 'train'", specifier = ">=0.10.5" },
 ]
+provides-extras = ["train"]
 
 [package.metadata.requires-dev]
 dev = [

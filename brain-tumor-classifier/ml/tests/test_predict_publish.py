@@ -7,6 +7,7 @@ import io
 import json
 from pathlib import Path
 
+import matplotlib
 import numpy as np
 import pytest
 import torch
@@ -22,6 +23,7 @@ from brain_mri.predict import (
     WEIGHTS_NAME,
     Predictor,
     encode_png_base64,
+    jet_colors,
     overlay_heatmap,
 )
 from brain_mri.publish import export_model, push_to_hub, resolve_repo_id
@@ -199,3 +201,11 @@ def test_resolve_repo_id_uses_env_or_account_name(monkeypatch: pytest.MonkeyPatc
     assert resolve_repo_id(FakeApi()) == "alice/brain-tumor-classifier"
     monkeypatch.setenv("HF_REPO_ID", "autre/depot")
     assert resolve_repo_id(FakeApi()) == "autre/depot"
+
+
+def test_jet_colors_matches_matplotlib() -> None:
+    """La palette « jet » en NumPy reste à 1 niveau de gris près de celle de matplotlib."""
+    values = np.arange(256) / 255  # 256 valeurs régulières entre 0 et 1
+    ours = jet_colors(values) * 255
+    reference = matplotlib.colormaps["jet"](values)[..., :3] * 255
+    assert np.abs(ours - reference).max() <= 1
