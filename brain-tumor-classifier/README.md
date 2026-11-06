@@ -4,7 +4,7 @@
 
 **Déposez une IRM du cerveau : un modèle d'intelligence artificielle la classe en 4 catégories (gliome, méningiome, tumeur de l'hypophyse, pas de tumeur) et montre sur l'image la zone qui a guidé sa réponse.**
 
-**[Démo en ligne](https://brain-tumor-classifier.david-b59510.workers.dev)**
+**[Démo en ligne](https://brain-tumor-classifier.david-b59-ia.workers.dev)**
 
 ![Page d'accueil du site](docs/images/accueil.png)
 
@@ -22,7 +22,7 @@ Projet réalisé dans le cadre de mon Master Machine Learning Engineering, puis 
 
 ## Essayer la démo
 
-1. Ouvrez la [démo en ligne](https://brain-tumor-classifier.david-b59510.workers.dev), page **Démo**.
+1. Ouvrez la [démo en ligne](https://brain-tumor-classifier.david-b59-ia.workers.dev), page **Démo**.
 2. Choisissez l'un des 24 exemples (tirés au hasard dans le jeu de test) ou déposez votre propre image JPG ou PNG.
 3. Lisez la classe prédite, les probabilités et la carte Grad-CAM (un curseur règle sa transparence).
 

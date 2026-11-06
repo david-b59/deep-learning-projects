@@ -4,7 +4,7 @@ Trois projets de deep learning de bout en bout, chacun avec un modèle entraîn�
 
 | # | Projet | Ce qu'il fait | État |
 |---|--------|---------------|------|
-| 1 | [Brain Tumor Classifier](brain-tumor-classifier/) | Classe des IRM cérébrales en 4 catégories et met en évidence la zone décisive avec Grad-CAM. [Démo en ligne](https://brain-tumor-classifier.david-b59510.workers.dev) | Terminé |
+| 1 | [Brain Tumor Classifier](brain-tumor-classifier/) | Classe des IRM cérébrales en 4 catégories et met en évidence la zone décisive avec Grad-CAM. [Démo en ligne](https://brain-tumor-classifier.david-b59-ia.workers.dev) | Terminé |
 | 2 | Santé / soins aux patients | À venir | Prévu |
 | 3 | Agroalimentaire / contrôle qualité | À venir | Prévu |
 
