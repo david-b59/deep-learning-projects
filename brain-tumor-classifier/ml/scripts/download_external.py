@@ -4,7 +4,10 @@ Jeux disponibles (option ``--dataset``) :
     - ``pmram`` (défaut) : « PMRAM: Bangladeshi Brain Cancer - MRI Dataset » (Mendeley Data),
       CC BY 4.0, https://data.mendeley.com/datasets/m7w55sw88b/1 ;
     - ``bdneuro`` : « BDNeuro-MRI » version 7 (Mendeley Data), CC BY 4.0,
-      https://data.mendeley.com/datasets/zwr4ntf94j/7 (dossiers ``train/val/test``).
+      https://data.mendeley.com/datasets/zwr4ntf94j/7 (dossiers ``train/val/test``) ;
+    - ``mtzd`` (nom court de l'identifiant ``82mtzd8x72``) : « Multi-Class Brain Tumor MRI
+      Dataset » version 3 (Mendeley Data), CC BY 4.0,
+      https://data.mendeley.com/datasets/82mtzd8x72/3 (4 dossiers de classes, noms ``N.jpg``).
 Ils servent de jeux de TEST uniquement (autres hôpitaux que Kaggle). Rien n'est écrit dans
 git : le dossier ``data/`` est ignoré.
 
@@ -125,6 +128,21 @@ SPECS = {
             "meningioma": "meningioma",
             "no_tumor": "notumor",
             "pituitary": "pituitary",
+        },
+        dedupe=False,
+    ),
+    "mtzd": DatasetSpec(
+        key="mtzd",
+        title="Multi-Class Brain Tumor MRI Dataset: Glioma, Healthy Brain, Meningioma, "
+        "and Pituitary Macroadenoma (v3)",
+        dataset_id="82mtzd8x72",
+        version=3,
+        archive_name="Brain Cancer MRI Dataset.zip",
+        folder_to_class={
+            "glioma": "glioma",
+            "meningioma": "meningioma",
+            "healthy": "notumor",
+            "pituitary macroadenoma": "pituitary",
         },
         dedupe=False,
     ),

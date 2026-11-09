@@ -1,0 +1,165 @@
+{
+  "seed": 42,
+  "n_splits": 7,
+  "threshold": 0.96,
+  "n_images": 7200,
+  "label_conflicts": {
+    "pairs": 18,
+    "images_excluded": 22
+  },
+  "groups": {
+    "n": 1206,
+    "largest": 122,
+    "largest_share": 0.01699637782112009,
+    "exact_duplicates_always_same_group": true,
+    "images_with_figshare_patient": 3815
+  },
+  "counts": {
+    "conflit": {
+      "glioma": 4,
+      "meningioma": 10,
+      "notumor": 0,
+      "pituitary": 8,
+      "total": 22
+    },
+    "purge": {
+      "glioma": 0,
+      "meningioma": 2,
+      "notumor": 0,
+      "pituitary": 0,
+      "total": 2
+    },
+    "test": {
+      "glioma": 257,
+      "meningioma": 254,
+      "notumor": 258,
+      "pituitary": 253,
+      "total": 1022
+    },
+    "train": {
+      "glioma": 1283,
+      "meningioma": 1278,
+      "notumor": 1278,
+      "pituitary": 1286,
+      "total": 5125
+    },
+    "val": {
+      "glioma": 256,
+      "meningioma": 256,
+      "notumor": 264,
+      "pituitary": 253,
+      "total": 1029
+    }
+  },
+  "is_512_by_part_and_class": {
+    "train": {
+      "glioma": {
+        "is_512": 1232,
+        "n": 1283
+      },
+      "meningioma": {
+        "is_512": 1104,
+        "n": 1278
+      },
+      "notumor": {
+        "is_512": 6,
+        "n": 1278
+      },
+      "pituitary": {
+        "is_512": 1224,
+        "n": 1286
+      }
+    },
+    "val": {
+      "glioma": {
+        "is_512": 246,
+        "n": 256
+      },
+      "meningioma": {
+        "is_512": 221,
+        "n": 256
+      },
+      "notumor": {
+        "is_512": 10,
+        "n": 264
+      },
+      "pituitary": {
+        "is_512": 244,
+        "n": 253
+      }
+    },
+    "test": {
+      "glioma": {
+        "is_512": 246,
+        "n": 257
+      },
+      "meningioma": {
+        "is_512": 219,
+        "n": 254
+      },
+      "notumor": {
+        "is_512": 4,
+        "n": 258
+      },
+      "pituitary": {
+        "is_512": 244,
+        "n": 253
+      }
+    }
+  },
+  "purge": {
+    "n": 2,
+    "per_class": {
+      "meningioma": 2
+    }
+  },
+  "residual_leak_test": {
+    "n_test": 1022,
+    "threshold": 0.96,
+    "n_above_threshold": 0,
+    "rate_above_threshold": 0.0,
+    "by_cosine_bin": {
+      "<0,90": 219,
+      "0,90-0,94": 638,
+      "0,94-0,96": 165,
+      "0,96-0,98": 0,
+      ">=0,98": 0
+    }
+  },
+  "residual_leak_val": {
+    "n_test": 1029,
+    "threshold": 0.96,
+    "n_above_threshold": 1,
+    "rate_above_threshold": 0.0009718172983479105,
+    "by_cosine_bin": {
+      "<0,90": 237,
+      "0,90-0,94": 619,
+      "0,94-0,96": 172,
+      "0,96-0,98": 1,
+      ">=0,98": 0
+    }
+  },
+  "criteria": {
+    "no_figshare_patient_in_train_and_test": {
+      "shared_patients": 0,
+      "patients_train": 169,
+      "patients_test": 30,
+      "passed": true
+    },
+    "no_test_image_with_train_neighbor": {
+      "n_above_threshold": 0,
+      "passed": true
+    },
+    "at_least_230_test_per_class": {
+      "per_class": {
+        "glioma": 257,
+        "meningioma": 254,
+        "notumor": 258,
+        "pituitary": 253
+      },
+      "passed": true
+    }
+  },
+  "all_criteria_passed": true,
+  "n_in_split": 7176
+}

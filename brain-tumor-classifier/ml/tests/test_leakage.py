@@ -118,3 +118,16 @@ def test_predict_paths(tmp_path: Path) -> None:
     result = predict_paths(ConstantModel(), paths, transform, torch.device("cpu"), batch_size=2)
     assert result.tolist() == [1, 1, 1]
     assert predict_paths(ConstantModel(), [], transform, torch.device("cpu")).tolist() == []
+
+
+def test_bootstrap_accuracy_interval_contains_accuracy_and_is_reproducible() -> None:
+    """L'IC encadre l'exactitude, est reproductible (même graine) et gère le cas vide."""
+    from brain_mri.leakage import bootstrap_accuracy
+
+    correct = np.array([True] * 80 + [False] * 20)
+    result = bootstrap_accuracy(correct, draws=500, seed=42)
+    assert result["n"] == 100
+    assert result["accuracy"] == 0.8
+    assert result["ci_low"] < 0.8 < result["ci_high"]
+    assert result == bootstrap_accuracy(correct, draws=500, seed=42)
+    assert bootstrap_accuracy(np.array([], dtype=bool))["accuracy"] is None
