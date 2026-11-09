@@ -85,6 +85,7 @@ requires-dist = [
     { name = "torchvision", marker = "sys_platform != 'linux'", specifier = ">=0.29.2" },
     { name = "torchvision", marker = "sys_platform == 'linux'", specifier = ">=0.29.2", index = "https://download.pytorch.org/whl/cpu" },
     { name = "tqdm", marker = "extra == 'train'", specifier = ">=4.70.1" },
+    { name = "transformers", marker = "extra == 'train'", specifier = ">=5.22.2" },
     { name = "truststore", marker = "extra == 'train'", specifier = ">=0.10.5" },
 ]
 provides-extras = ["train"]

@@ -30,6 +30,7 @@ train = [
     "scikit-learn>=1.9.1",
     "six>=1.17.0",
     "tqdm>=4.70.1",
+    "transformers>=5.22.2",
     "truststore>=0.10.5",
 ]
 

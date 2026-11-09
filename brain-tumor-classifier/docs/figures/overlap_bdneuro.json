@@ -1,0 +1,95 @@
+{
+  "dataset": "BDNeuro-MRI: A Bangladeshi Clinical Brain Tumor MRI Dataset (v7)",
+  "model": "facebook/dinov2-small",
+  "revision": "ed25f3a31f01632728cabb09d1542f84ab7b0056",
+  "head_crop_version": "v2",
+  "thresholds": {
+    "duplicate_cosine": 0.94,
+    "gray_zone_cosine": 0.9
+  },
+  "per_class": {
+    "glioma": {
+      "total": 2191,
+      "exact": 1086,
+      "copies": 427,
+      "gray_zone": 229,
+      "kept": 449
+    },
+    "meningioma": {
+      "total": 1478,
+      "exact": 976,
+      "copies": 193,
+      "gray_zone": 159,
+      "kept": 150
+    },
+    "notumor": {
+      "total": 787,
+      "exact": 368,
+      "copies": 268,
+      "gray_zone": 64,
+      "kept": 87
+    },
+    "pituitary": {
+      "total": 1485,
+      "exact": 885,
+      "copies": 255,
+      "gray_zone": 147,
+      "kept": 198
+    }
+  },
+  "total": {
+    "images": 5941,
+    "exact": 3315,
+    "copies": 1143,
+    "gray_zone": 599,
+    "kept": 884,
+    "found_share": 0.7503787241205184,
+    "found_or_gray_share": 0.8512035010940919
+  },
+  "twin_classes": {
+    "copies_and_exact": {
+      "same_class": 4448,
+      "other_class": 10,
+      "pairs": {
+        "glioma -> glioma": 1510,
+        "glioma -> meningioma": 3,
+        "meningioma -> meningioma": 1169,
+        "notumor -> notumor": 636,
+        "pituitary -> meningioma": 7,
+        "pituitary -> pituitary": 1133
+      }
+    },
+    "gray_zone": {
+      "same_class": 529,
+      "other_class": 70,
+      "pairs": {
+        "glioma -> glioma": 200,
+        "glioma -> meningioma": 25,
+        "glioma -> pituitary": 4,
+        "meningioma -> glioma": 1,
+        "meningioma -> meningioma": 157,
+        "meningioma -> pituitary": 1,
+        "notumor -> glioma": 2,
+        "notumor -> notumor": 62,
+        "pituitary -> meningioma": 36,
+        "pituitary -> notumor": 1,
+        "pituitary -> pituitary": 110
+      }
+    }
+  },
+  "internal_duplicates": {
+    "threshold": 0.94,
+    "pairs": 2806,
+    "images_with_a_twin": 3129,
+    "images_with_a_twin_share": 0.5266790102676318,
+    "groups": 1087,
+    "largest_group": 82,
+    "pairs_across_different_splits": 1245,
+    "images_with_a_twin_per_class": {
+      "glioma": 916,
+      "meningioma": 836,
+      "notumor": 481,
+      "pituitary": 896
+    }
+  }
+}
