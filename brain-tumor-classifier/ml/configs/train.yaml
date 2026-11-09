@@ -12,6 +12,26 @@ data:
   flip_prob: 0.5                    # augmentation légère, entraînement uniquement
   rotation_degrees: 10              # rotation aléatoire de ± 10 degrés
   jitter: 0.1                       # variation de luminosité et de contraste
+  preprocessing: legacy             # "legacy" (étirement, modèle en ligne) ou "head_crop" (tête recadrée, sans étirement)
+  # split_manifest: ml/splits/kaggle_grouped.csv  # découpage honnête (CSV) ; absent = Training/Testing de Kaggle
+  # manifest_path_column: file      # colonnes du CSV (valeurs par défaut)
+  # manifest_label_column: class
+  # manifest_split_column: part     # les parties autres que train, val, test (conflit, purge) sont ignorées
+  head_crop_aug:                    # augmentation du mode head_crop (entraînement seulement)
+    crop_scale: [0.6, 1.0]          # RandomResizedCrop : part de l'image gardée
+    crop_ratio: [0.8, 1.25]         # RandomResizedCrop : rapport largeur/hauteur
+    zoomout_prob: 0.3               # RandomZoomOut : probabilité (fond noir)
+    zoomout_max: 1.4                # RandomZoomOut : dézoom maximal
+    flip_prob: 0.5                  # miroir horizontal
+    rotation_degrees: 10            # rotation de ± 10 degrés
+    contrast: 0.2                   # contraste : facteur entre 0,8 et 1,2
+    gamma_range: [0.8, 1.25]        # gamma tiré dans cette plage
+    blur_prob: 0.2                  # flou gaussien
+    blur_sigma: [0.1, 1.5]
+    noise_prob: 0.2                 # bruit gaussien
+    noise_sigma: 0.03
+    jpeg_prob: 0.3                  # compression JPEG
+    jpeg_quality: [50, 95]
   mean: [0.485, 0.456, 0.406]       # statistiques d'ImageNet, exigées par le modèle pré-entraîné
   std: [0.229, 0.224, 0.225]
 
