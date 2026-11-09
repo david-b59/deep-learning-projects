@@ -9,6 +9,7 @@ silence.
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Literal
 
 import yaml
 from pydantic import BaseModel, ConfigDict, Field, field_validator
@@ -17,6 +18,30 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 # parents[3] remonte de quatre niveaux : brain_mri, src, ml, puis la racine).
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
 DEFAULT_CONFIG_PATH = PROJECT_ROOT / "ml" / "configs" / "train.yaml"
+
+
+class HeadCropAugConfig(BaseModel):
+    """Augmentation du mode de prétraitement ``head_crop`` (entraînement uniquement)."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    crop_scale: tuple[float, float] = (
+        0.6,
+        1.0,
+    )  # part de l'image gardée par le recadrage aléatoire
+    crop_ratio: tuple[float, float] = (0.8, 1.25)  # rapport largeur/hauteur du recadrage
+    zoomout_prob: float = Field(0.3, ge=0, le=1)  # probabilité de dézoom (bandes noires autour)
+    zoomout_max: float = Field(1.4, ge=1)  # facteur de dézoom maximal (minimum : 1,0)
+    flip_prob: float = Field(0.5, ge=0, le=1)  # probabilité de miroir horizontal
+    rotation_degrees: float = Field(10.0, ge=0)  # rotation aléatoire de ± ce nombre de degrés
+    contrast: float = Field(0.2, ge=0, le=1)  # variation du contraste (facteur 1 ± contrast)
+    gamma_range: tuple[float, float] = (0.8, 1.25)  # plage du gamma tiré au hasard
+    blur_prob: float = Field(0.2, ge=0, le=1)  # probabilité de flou gaussien
+    blur_sigma: tuple[float, float] = (0.1, 1.5)  # écart-type du flou (pixels)
+    noise_prob: float = Field(0.2, ge=0, le=1)  # probabilité de bruit gaussien
+    noise_sigma: float = Field(0.03, ge=0)  # écart-type du bruit (échelle 0-1)
+    jpeg_prob: float = Field(0.3, ge=0, le=1)  # probabilité de compression JPEG
+    jpeg_quality: tuple[int, int] = (50, 95)  # plage de qualité JPEG (1-100)
 
 
 class DataConfig(BaseModel):
@@ -37,6 +62,17 @@ class DataConfig(BaseModel):
     flip_prob: float = Field(0.5, ge=0, le=1)  # probabilité de retournement horizontal
     rotation_degrees: float = Field(10.0, ge=0)  # rotation aléatoire de ± ce nombre de degrés
     jitter: float = Field(0.1, ge=0, le=1)  # variation de luminosité et de contraste
+    # Mode de prétraitement : "legacy" = comportement historique (étirement direct en 224x224,
+    # modèle en ligne) ; "head_crop" = recadrage de la tête, bandes noires, sans étirement.
+    preprocessing: Literal["legacy", "head_crop"] = "legacy"
+    head_crop_aug: HeadCropAugConfig = HeadCropAugConfig()  # lue seulement en mode head_crop
+    # Manifeste de découpage (CSV) : s'il est donné, il remplace le découpage Training/Testing.
+    split_manifest: Path | None = None
+    manifest_path_column: str = "file"  # colonne : chemin de l'image relatif à raw_dir
+    manifest_label_column: str = "class"  # colonne : nom de la classe
+    manifest_split_column: str = (
+        "part"  # colonne : partie (train, val, test ; autres lignes ignorées)
+    )
     # Moyenne et écart-type d'ImageNet : le modèle pré-entraîné les attend.
     mean: tuple[float, float, float] = (0.485, 0.456, 0.406)
     std: tuple[float, float, float] = (0.229, 0.224, 0.225)
@@ -46,6 +82,14 @@ class DataConfig(BaseModel):
     def _resolve_against_project_root(cls, value: Path) -> Path:
         """Transforme un chemin relatif en chemin absolu, à partir de la racine du projet."""
         return value if value.is_absolute() else PROJECT_ROOT / value
+
+    @field_validator("split_manifest")
+    @classmethod
+    def _resolve_manifest(cls, value: Path | None) -> Path | None:
+        """Rend le chemin du manifeste absolu (racine du projet) ; None reste None."""
+        if value is None or value.is_absolute():
+            return value
+        return PROJECT_ROOT / value
 
 
 class ModelConfig(BaseModel):

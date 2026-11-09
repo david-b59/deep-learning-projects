@@ -10,19 +10,27 @@ Les trois jeux :
       Sert à régler l'entraînement et à l'arrêter au bon moment.
     - ``test`` : le dossier ``Testing``, sans augmentation. Utilisé une seule fois, à la fin.
 
+Si ``split_manifest`` est donné dans la configuration, les trois jeux sont lus dans ce CSV
+(colonnes configurables : chemin relatif à ``raw_dir``, classe, partie ``train``/``val``/``test``)
+et ni le rapport de doublons ni le découpage ci-dessus ne sont utilisés : le manifeste gère
+déjà doublons et groupes « même patient ».
+
 Les images en double repérées par :mod:`brain_mri.duplicates` sont écartées d'abord :
 une même image ne peut donc pas se trouver des deux côtés d'un découpage.
 """
 
 from __future__ import annotations
 
+import csv
 import logging
 import random
+from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
 
 import numpy as np
 import torch
+from PIL import Image
 from sklearn.model_selection import train_test_split
 from torch.utils.data import DataLoader, Dataset, Subset
 from torchvision import datasets
@@ -97,12 +105,128 @@ def stratified_split(
     return sorted(train_idx.tolist()), sorted(val_idx.tolist())
 
 
+MANIFEST_SPLITS = ("train", "val", "test")  # valeurs admises dans la colonne « partie » du CSV
+
+
+class ManifestDataset(Dataset):
+    """Jeu de données défini par une liste ``(chemin, indice de classe)`` (lue dans un CSV)."""
+
+    def __init__(
+        self, samples: list[tuple[Path, int]], transform: v2.Compose, classes: list[str]
+    ) -> None:
+        """Mémorise les échantillons.
+
+        Args:
+            samples: Couples ``(chemin absolu de l'image, indice de classe)``.
+            transform: Transformation appliquée à chaque image (PIL RGB en entrée).
+            classes: Noms des classes triés (l'indice = l'étiquette).
+        """
+        self.samples = samples
+        self.transform = transform
+        self.classes = classes
+        self.targets = [target for _, target in samples]
+
+    def __len__(self) -> int:
+        """Nombre d'images du jeu."""
+        return len(self.samples)
+
+    def __getitem__(self, index: int) -> tuple[torch.Tensor, int]:
+        """Charge l'image ``index`` (convertie en RGB, comme ``ImageFolder``) et la transforme."""
+        path, target = self.samples[index]
+        with Image.open(path) as image:
+            return self.transform(image.convert("RGB")), target
+
+
+def read_split_manifest(config: DataConfig) -> tuple[dict[str, list[tuple[Path, str]]], list[str]]:
+    """Lit le CSV de découpage (``config.split_manifest``).
+
+    Colonnes attendues (noms réglables dans la configuration) : chemin relatif à ``raw_dir``
+    (``manifest_path_column``), nom de la classe (``manifest_label_column``) et partie
+    (``manifest_split_column``, ``train``, ``val`` ou ``test`` ; les autres lignes sont ignorées).
+    Les autres colonnes (sha256, groupe, cosinus...) sont ignorées.
+
+    Args:
+        config: Configuration des données (``split_manifest`` doit être renseigné).
+
+    Returns:
+        ``(échantillons par partie, noms de classes triés)`` ; chaque échantillon est
+        ``(chemin absolu, nom de classe)``.
+
+    Raises:
+        ValueError: Si le manifeste est absent de la configuration, s'il lui manque une colonne,
+            ou si l'une des parties train, val, test est vide. Les lignes dont la partie est autre
+            (par ex. ``conflit``, ``purge``) sont ignorées et comptées dans le journal.
+        FileNotFoundError: Si le CSV ou une image listée n'existe pas.
+    """
+    if config.split_manifest is None:
+        raise ValueError("split_manifest n'est pas renseigné dans la configuration")
+    columns = (
+        config.manifest_path_column,
+        config.manifest_label_column,
+        config.manifest_split_column,
+    )
+    with open(config.split_manifest, encoding="utf-8", newline="") as file:
+        reader = csv.DictReader(file)
+        missing = [c for c in columns if c not in (reader.fieldnames or [])]
+        if missing:
+            raise ValueError(f"Colonnes absentes du manifeste {config.split_manifest} : {missing}")
+        rows = list(reader)
+    samples: dict[str, list[tuple[Path, str]]] = {name: [] for name in MANIFEST_SPLITS}
+    ignored: Counter[str] = Counter()
+    for row in rows:
+        part = row[config.manifest_split_column].strip()
+        if part not in samples:
+            ignored[part] += 1  # ex. « conflit » ou « purge » : image écartée du manifeste
+            continue
+        path = config.raw_dir / row[config.manifest_path_column]
+        if not path.is_file():
+            raise FileNotFoundError(f"Image du manifeste introuvable : {path}")
+        samples[part].append((path, row[config.manifest_label_column].strip()))
+    for value, count in sorted(ignored.items()):
+        LOGGER.info("%d ligne(s) du manifeste ignorée(s) (partie « %s »)", count, value)
+    empty = [name for name, items in samples.items() if not items]
+    if empty:
+        raise ValueError(f"Parties vides dans le manifeste : {empty}")
+    class_names = sorted({label for items in samples.values() for _, label in items})
+    return samples, class_names
+
+
+def make_datasets_from_manifest(config: DataConfig) -> tuple[Dataset, Dataset, Dataset, list[str]]:
+    """Construit les trois jeux depuis le CSV de découpage (augmentation sur ``train`` seulement).
+
+    Args:
+        config: Configuration des données (``split_manifest`` renseigné).
+
+    Returns:
+        ``(train, val, test, class_names)`` avec les noms de classes triés.
+    """
+    samples, class_names = read_split_manifest(config)
+    index = {name: i for i, name in enumerate(class_names)}
+    datasets_by_part = {
+        part: ManifestDataset(
+            [(path, index[label]) for path, label in items],
+            build_transforms(config, train=(part == "train")),
+            class_names,
+        )
+        for part, items in samples.items()
+    }
+    LOGGER.info("Découpage lu dans %s", config.split_manifest)
+    return (
+        datasets_by_part["train"],
+        datasets_by_part["val"],
+        datasets_by_part["test"],
+        class_names,
+    )
+
+
 def make_datasets(config: DataConfig) -> tuple[Dataset, Dataset, Dataset, list[str]]:
     """Construit les jeux d'entraînement, de validation et de test.
 
     Le dossier d'entraînement est chargé deux fois (avec et sans augmentation) et les
     mêmes indices stratifiés sont appliqués aux deux : la validation n'est donc jamais
     augmentée.
+
+    Si ``config.split_manifest`` est renseigné, délègue à :func:`make_datasets_from_manifest`.
 
     Args:
         config: Configuration des données.
@@ -113,6 +237,8 @@ def make_datasets(config: DataConfig) -> tuple[Dataset, Dataset, Dataset, list[s
     Raises:
         ValueError: Si Training et Testing n'ont pas les mêmes classes.
     """
+    if config.split_manifest is not None:
+        return make_datasets_from_manifest(config)  # découpage défini par le CSV
     report = load_or_create_report(config.raw_dir, config.processed_dir)
     excluded = report.files_to_exclude()
     LOGGER.info("%d fichier(s) en double écarté(s)", len(excluded))
