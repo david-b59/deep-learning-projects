@@ -1,0 +1,81 @@
+{
+  "rule": "plus basse tranche où >= 95 % des paires (de même classe, identifiants connus) sont du même patient ET plus grand groupe <= 5 % des images ; sinon 0,94",
+  "n_images": 7200,
+  "n_images_with_patient": 3815,
+  "n_patients_found": 233,
+  "match_cosine": 0.98,
+  "tranches": [
+    {
+      "threshold": 0.9,
+      "pairs_known": 39710,
+      "pairs_same_patient": 5539,
+      "same_patient_rate": 0.13948627549735582,
+      "n_groups": 386,
+      "largest_group": 1767,
+      "largest_group_share": 0.24541666666666667,
+      "largest_group_without_patient_links": 1504
+    },
+    {
+      "threshold": 0.92,
+      "pairs_known": 10712,
+      "pairs_same_patient": 3680,
+      "same_patient_rate": 0.3435399551904406,
+      "n_groups": 530,
+      "largest_group": 1710,
+      "largest_group_share": 0.2375,
+      "largest_group_without_patient_links": 601
+    },
+    {
+      "threshold": 0.93,
+      "pairs_known": 5169,
+      "pairs_same_patient": 2854,
+      "same_patient_rate": 0.5521377442445348,
+      "n_groups": 638,
+      "largest_group": 1645,
+      "largest_group_share": 0.22847222222222222,
+      "largest_group_without_patient_links": 463
+    },
+    {
+      "threshold": 0.94,
+      "pairs_known": 2672,
+      "pairs_same_patient": 2098,
+      "same_patient_rate": 0.7851796407185628,
+      "n_groups": 774,
+      "largest_group": 1446,
+      "largest_group_share": 0.20083333333333334,
+      "largest_group_without_patient_links": 278
+    },
+    {
+      "threshold": 0.95,
+      "pairs_known": 1534,
+      "pairs_same_patient": 1429,
+      "same_patient_rate": 0.9315514993481095,
+      "n_groups": 991,
+      "largest_group": 243,
+      "largest_group_share": 0.03375,
+      "largest_group_without_patient_links": 131
+    },
+    {
+      "threshold": 0.96,
+      "pairs_known": 1009,
+      "pairs_same_patient": 985,
+      "same_patient_rate": 0.9762140733399405,
+      "n_groups": 1214,
+      "largest_group": 122,
+      "largest_group_share": 0.016944444444444446,
+      "largest_group_without_patient_links": 56
+    },
+    {
+      "threshold": 0.98,
+      "pairs_known": 780,
+      "pairs_same_patient": 780,
+      "same_patient_rate": 1.0,
+      "n_groups": 2262,
+      "largest_group": 45,
+      "largest_group_share": 0.00625,
+      "largest_group_without_patient_links": 31
+    }
+  ],
+  "chosen_threshold": 0.96,
+  "reason": "plus basse tranche respectant la règle (a) et (b)"
+}

@@ -282,3 +282,34 @@ def select_pairs_by_bin(
             cell = np.where((bins == b) & (labels == c))[0].tolist()
             chosen += [(i, b, c) for i in sample_indices(cell, per_cell, seed)]
     return chosen
+
+
+def bootstrap_accuracy(
+    correct: np.ndarray, draws: int = 2000, seed: int = 42, level: float = 0.95
+) -> dict:
+    """Exactitude et intervalle de confiance par bootstrap (rééchantillonnage avec remise).
+
+    Args:
+        correct: Booléens « le modèle a juste », ``(N,)``.
+        draws: Nombre de tirages bootstrap.
+        seed: Graine du générateur aléatoire.
+        level: Niveau de confiance de l'intervalle (0,95 pour 95 %).
+
+    Returns:
+        ``{"n", "accuracy", "ci_low", "ci_high"}`` ; l'intervalle est formé des percentiles
+        de l'exactitude sur les tirages (``None`` si ``correct`` est vide).
+    """
+    n = len(correct)
+    if n == 0:
+        return {"n": 0, "accuracy": None, "ci_low": None, "ci_high": None}
+    rng = np.random.default_rng(seed)
+    samples = rng.integers(0, n, size=(draws, n))  # indices tirés avec remise, un tirage par ligne
+    means = correct.astype(np.float64)[samples].mean(axis=1)
+    tail = 100 * (1 - level) / 2
+    low, high = np.percentile(means, [tail, 100 - tail])
+    return {
+        "n": n,
+        "accuracy": float(correct.mean()),
+        "ci_low": float(low),
+        "ci_high": float(high),
+    }
