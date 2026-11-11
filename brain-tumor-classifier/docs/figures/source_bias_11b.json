@@ -1,0 +1,651 @@
+{
+  "test": {
+    "n": 1022,
+    "n_not_512": 309
+  },
+  "note_probes": "B0 et B1 partagent la sonde « dinov2 » (vue d'évaluation, même corps)",
+  "models": {
+    "a0": {
+      "concordance": {
+        "accuracy_evaluation_json": 0.9187866927592955,
+        "accuracy_recomputed": 0.9187866927592955,
+        "same_prediction_rate": 1.0
+      },
+      "table": [
+        {
+          "class": "glioma",
+          "is_512": true,
+          "n": 246,
+          "accuracy": {
+            "n": 246,
+            "value": 0.9227642276422764,
+            "ci_low": 0.8902439024390244,
+            "ci_high": 0.9552845528455285
+          },
+          "predicted_notumor": 0,
+          "predicted_notumor_rate": 0.0
+        },
+        {
+          "class": "glioma",
+          "is_512": false,
+          "n": 11,
+          "accuracy": {
+            "n": 11,
+            "value": 0.36363636363636365,
+            "ci_low": 0.09090909090909091,
+            "ci_high": 0.6363636363636364
+          },
+          "predicted_notumor": 5,
+          "predicted_notumor_rate": 0.45454545454545453
+        },
+        {
+          "class": "meningioma",
+          "is_512": true,
+          "n": 219,
+          "accuracy": {
+            "n": 219,
+            "value": 0.8310502283105022,
+            "ci_low": 0.7808219178082192,
+            "ci_high": 0.8767123287671232
+          },
+          "predicted_notumor": 0,
+          "predicted_notumor_rate": 0.0
+        },
+        {
+          "class": "meningioma",
+          "is_512": false,
+          "n": 35,
+          "accuracy": {
+            "n": 35,
+            "value": 0.5142857142857142,
+            "ci_low": 0.34285714285714286,
+            "ci_high": 0.6857142857142857
+          },
+          "predicted_notumor": 10,
+          "predicted_notumor_rate": 0.2857142857142857
+        },
+        {
+          "class": "notumor",
+          "is_512": true,
+          "n": 4,
+          "accuracy": {
+            "n": 4,
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0
+          },
+          "predicted_notumor": null,
+          "predicted_notumor_rate": null
+        },
+        {
+          "class": "notumor",
+          "is_512": false,
+          "n": 254,
+          "accuracy": {
+            "n": 254,
+            "value": 0.9960629921259843,
+            "ci_low": 0.9881889763779528,
+            "ci_high": 1.0
+          },
+          "predicted_notumor": null,
+          "predicted_notumor_rate": null
+        },
+        {
+          "class": "pituitary",
+          "is_512": true,
+          "n": 244,
+          "accuracy": {
+            "n": 244,
+            "value": 0.9918032786885246,
+            "ci_low": 0.9795081967213115,
+            "ci_high": 1.0
+          },
+          "predicted_notumor": 0,
+          "predicted_notumor_rate": 0.0
+        },
+        {
+          "class": "pituitary",
+          "is_512": false,
+          "n": 9,
+          "accuracy": {
+            "n": 9,
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0
+          },
+          "predicted_notumor": 0,
+          "predicted_notumor_rate": 0.0
+        }
+      ],
+      "criteria": {
+        "S1": {
+          "accuracy_tumors_not_512": {
+            "n": 55,
+            "value": 0.5636363636363636,
+            "ci_low": 0.43636363636363634,
+            "ci_high": 0.6909090909090909
+          },
+          "passed": null,
+          "reason": "modèle de référence"
+        },
+        "S2": {
+          "tumor_predicted_notumor": 15,
+          "passed": false
+        },
+        "S3": {
+          "passed": null,
+          "reason": "estimation hors pli absente"
+        },
+        "guards": {
+          "notumor_recall": 0.9961240310077519,
+          "accuracy": 0.9187866927592955,
+          "passed": true
+        }
+      }
+    },
+    "a1": {
+      "concordance": {
+        "accuracy_evaluation_json": 0.9031311154598826,
+        "accuracy_recomputed": 0.9031311154598826,
+        "same_prediction_rate": 1.0
+      },
+      "table": [
+        {
+          "class": "glioma",
+          "is_512": true,
+          "n": 246,
+          "accuracy": {
+            "n": 246,
+            "value": 0.8861788617886179,
+            "ci_low": 0.8455284552845529,
+            "ci_high": 0.9227642276422764
+          },
+          "predicted_notumor": 5,
+          "predicted_notumor_rate": 0.02032520325203252
+        },
+        {
+          "class": "glioma",
+          "is_512": false,
+          "n": 11,
+          "accuracy": {
+            "n": 11,
+            "value": 0.45454545454545453,
+            "ci_low": 0.18181818181818182,
+            "ci_high": 0.7272727272727273
+          },
+          "predicted_notumor": 5,
+          "predicted_notumor_rate": 0.45454545454545453
+        },
+        {
+          "class": "meningioma",
+          "is_512": true,
+          "n": 219,
+          "accuracy": {
+            "n": 219,
+            "value": 0.8127853881278538,
+            "ci_low": 0.7579908675799086,
+            "ci_high": 0.8584474885844748
+          },
+          "predicted_notumor": 5,
+          "predicted_notumor_rate": 0.0228310502283105
+        },
+        {
+          "class": "meningioma",
+          "is_512": false,
+          "n": 35,
+          "accuracy": {
+            "n": 35,
+            "value": 0.6,
+            "ci_low": 0.42857142857142855,
+            "ci_high": 0.7714285714285715
+          },
+          "predicted_notumor": 6,
+          "predicted_notumor_rate": 0.17142857142857143
+        },
+        {
+          "class": "notumor",
+          "is_512": true,
+          "n": 4,
+          "accuracy": {
+            "n": 4,
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0
+          },
+          "predicted_notumor": null,
+          "predicted_notumor_rate": null
+        },
+        {
+          "class": "notumor",
+          "is_512": false,
+          "n": 254,
+          "accuracy": {
+            "n": 254,
+            "value": 0.9921259842519685,
+            "ci_low": 0.9803149606299213,
+            "ci_high": 1.0
+          },
+          "predicted_notumor": null,
+          "predicted_notumor_rate": null
+        },
+        {
+          "class": "pituitary",
+          "is_512": true,
+          "n": 244,
+          "accuracy": {
+            "n": 244,
+            "value": 0.9672131147540983,
+            "ci_low": 0.9426229508196722,
+            "ci_high": 0.9877049180327869
+          },
+          "predicted_notumor": 1,
+          "predicted_notumor_rate": 0.004098360655737705
+        },
+        {
+          "class": "pituitary",
+          "is_512": false,
+          "n": 9,
+          "accuracy": {
+            "n": 9,
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0
+          },
+          "predicted_notumor": 0,
+          "predicted_notumor_rate": 0.0
+        }
+      ],
+      "criteria": {
+        "S1": {
+          "accuracy_tumors_not_512": {
+            "n": 55,
+            "value": 0.6363636363636364,
+            "ci_low": 0.509090909090909,
+            "ci_high": 0.7636363636363637
+          },
+          "diff_vs_a0": {
+            "n": 55,
+            "value": 0.07272727272727272,
+            "ci_low": 0.0,
+            "ci_high": 0.16363636363636364
+          },
+          "passed": false
+        },
+        "S2": {
+          "tumor_predicted_notumor": 22,
+          "passed": false
+        },
+        "S3": {
+          "passed": null,
+          "reason": "estimation hors pli absente"
+        },
+        "guards": {
+          "notumor_recall": 0.9922480620155039,
+          "accuracy": 0.9031311154598826,
+          "passed": true
+        }
+      }
+    },
+    "b0": {
+      "concordance": {
+        "accuracy_evaluation_json": 0.8855185909980431,
+        "accuracy_recomputed": 0.8855185909980431,
+        "same_prediction_rate": 1.0
+      },
+      "table": [
+        {
+          "class": "glioma",
+          "is_512": true,
+          "n": 246,
+          "accuracy": {
+            "n": 246,
+            "value": 0.8495934959349594,
+            "ci_low": 0.8048780487804879,
+            "ci_high": 0.8943089430894309
+          },
+          "predicted_notumor": 0,
+          "predicted_notumor_rate": 0.0
+        },
+        {
+          "class": "glioma",
+          "is_512": false,
+          "n": 11,
+          "accuracy": {
+            "n": 11,
+            "value": 0.18181818181818182,
+            "ci_low": 0.0,
+            "ci_high": 0.45454545454545453
+          },
+          "predicted_notumor": 3,
+          "predicted_notumor_rate": 0.2727272727272727
+        },
+        {
+          "class": "meningioma",
+          "is_512": true,
+          "n": 219,
+          "accuracy": {
+            "n": 219,
+            "value": 0.8082191780821918,
+            "ci_low": 0.7534246575342466,
+            "ci_high": 0.8584474885844748
+          },
+          "predicted_notumor": 1,
+          "predicted_notumor_rate": 0.0045662100456621
+        },
+        {
+          "class": "meningioma",
+          "is_512": false,
+          "n": 35,
+          "accuracy": {
+            "n": 35,
+            "value": 0.7428571428571429,
+            "ci_low": 0.6,
+            "ci_high": 0.8857142857142857
+          },
+          "predicted_notumor": 4,
+          "predicted_notumor_rate": 0.11428571428571428
+        },
+        {
+          "class": "notumor",
+          "is_512": true,
+          "n": 4,
+          "accuracy": {
+            "n": 4,
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0
+          },
+          "predicted_notumor": null,
+          "predicted_notumor_rate": null
+        },
+        {
+          "class": "notumor",
+          "is_512": false,
+          "n": 254,
+          "accuracy": {
+            "n": 254,
+            "value": 0.9763779527559056,
+            "ci_low": 0.9566929133858267,
+            "ci_high": 0.9921259842519685
+          },
+          "predicted_notumor": null,
+          "predicted_notumor_rate": null
+        },
+        {
+          "class": "pituitary",
+          "is_512": true,
+          "n": 244,
+          "accuracy": {
+            "n": 244,
+            "value": 0.9426229508196722,
+            "ci_low": 0.9098360655737705,
+            "ci_high": 0.9672131147540983
+          },
+          "predicted_notumor": 0,
+          "predicted_notumor_rate": 0.0
+        },
+        {
+          "class": "pituitary",
+          "is_512": false,
+          "n": 9,
+          "accuracy": {
+            "n": 9,
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0
+          },
+          "predicted_notumor": 0,
+          "predicted_notumor_rate": 0.0
+        }
+      ],
+      "criteria": {
+        "S1": {
+          "accuracy_tumors_not_512": {
+            "n": 55,
+            "value": 0.6727272727272727,
+            "ci_low": 0.5454545454545454,
+            "ci_high": 0.8
+          },
+          "diff_vs_a0": {
+            "n": 55,
+            "value": 0.10909090909090909,
+            "ci_low": 0.0,
+            "ci_high": 0.21818181818181817
+          },
+          "passed": false
+        },
+        "S2": {
+          "tumor_predicted_notumor": 8,
+          "passed": false
+        },
+        "S3": {
+          "passed": null,
+          "reason": "estimation hors pli absente"
+        },
+        "guards": {
+          "notumor_recall": 0.9767441860465116,
+          "accuracy": 0.8855185909980431,
+          "passed": true
+        }
+      }
+    },
+    "b1": {
+      "concordance": {
+        "accuracy_evaluation_json": 0.87279843444227,
+        "accuracy_recomputed": 0.87279843444227,
+        "same_prediction_rate": 1.0
+      },
+      "table": [
+        {
+          "class": "glioma",
+          "is_512": true,
+          "n": 246,
+          "accuracy": {
+            "n": 246,
+            "value": 0.8536585365853658,
+            "ci_low": 0.8089430894308943,
+            "ci_high": 0.8943089430894309
+          },
+          "predicted_notumor": 4,
+          "predicted_notumor_rate": 0.016260162601626018
+        },
+        {
+          "class": "glioma",
+          "is_512": false,
+          "n": 11,
+          "accuracy": {
+            "n": 11,
+            "value": 0.18181818181818182,
+            "ci_low": 0.0,
+            "ci_high": 0.45454545454545453
+          },
+          "predicted_notumor": 4,
+          "predicted_notumor_rate": 0.36363636363636365
+        },
+        {
+          "class": "meningioma",
+          "is_512": true,
+          "n": 219,
+          "accuracy": {
+            "n": 219,
+            "value": 0.7808219178082192,
+            "ci_low": 0.7214611872146118,
+            "ci_high": 0.8356164383561644
+          },
+          "predicted_notumor": 0,
+          "predicted_notumor_rate": 0.0
+        },
+        {
+          "class": "meningioma",
+          "is_512": false,
+          "n": 35,
+          "accuracy": {
+            "n": 35,
+            "value": 0.8,
+            "ci_low": 0.6571428571428571,
+            "ci_high": 0.9142857142857143
+          },
+          "predicted_notumor": 4,
+          "predicted_notumor_rate": 0.11428571428571428
+        },
+        {
+          "class": "notumor",
+          "is_512": true,
+          "n": 4,
+          "accuracy": {
+            "n": 4,
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0
+          },
+          "predicted_notumor": null,
+          "predicted_notumor_rate": null
+        },
+        {
+          "class": "notumor",
+          "is_512": false,
+          "n": 254,
+          "accuracy": {
+            "n": 254,
+            "value": 0.984251968503937,
+            "ci_low": 0.9645669291338582,
+            "ci_high": 0.9960629921259843
+          },
+          "predicted_notumor": null,
+          "predicted_notumor_rate": null
+        },
+        {
+          "class": "pituitary",
+          "is_512": true,
+          "n": 244,
+          "accuracy": {
+            "n": 244,
+            "value": 0.9098360655737705,
+            "ci_low": 0.8729508196721312,
+            "ci_high": 0.9426229508196722
+          },
+          "predicted_notumor": 0,
+          "predicted_notumor_rate": 0.0
+        },
+        {
+          "class": "pituitary",
+          "is_512": false,
+          "n": 9,
+          "accuracy": {
+            "n": 9,
+            "value": 0.5555555555555556,
+            "ci_low": 0.2222222222222222,
+            "ci_high": 0.8888888888888888
+          },
+          "predicted_notumor": 0,
+          "predicted_notumor_rate": 0.0
+        }
+      ],
+      "criteria": {
+        "S1": {
+          "accuracy_tumors_not_512": {
+            "n": 55,
+            "value": 0.6363636363636364,
+            "ci_low": 0.509090909090909,
+            "ci_high": 0.7636363636363637
+          },
+          "diff_vs_a0": {
+            "n": 55,
+            "value": 0.07272727272727272,
+            "ci_low": -0.07272727272727272,
+            "ci_high": 0.21818181818181817
+          },
+          "passed": false
+        },
+        "S2": {
+          "tumor_predicted_notumor": 12,
+          "passed": false
+        },
+        "S3": {
+          "passed": null,
+          "reason": "estimation hors pli absente"
+        },
+        "guards": {
+          "notumor_recall": 0.9844961240310077,
+          "accuracy": 0.87279843444227,
+          "passed": true
+        }
+      }
+    }
+  },
+  "probes": {
+    "a0": {
+      "source_probe": {
+        "n_train": 3847,
+        "n_test": 764,
+        "auc_test": 0.9982561866906013,
+        "accuracy_test": 0.9856020942408377
+      },
+      "within_source_probe": {
+        "n_train": 1559,
+        "n_train_tumors": 287,
+        "recall_tumors": {
+          "n": 55,
+          "value": 0.8363636363636363,
+          "ci_low": 0.7272727272727273,
+          "ci_high": 0.9272727272727272
+        },
+        "specificity_notumor": {
+          "n": 254,
+          "value": 0.984251968503937,
+          "ci_low": 0.9645669291338582,
+          "ci_high": 0.9960629921259843
+        }
+      }
+    },
+    "a1": {
+      "source_probe": {
+        "n_train": 3847,
+        "n_test": 764,
+        "auc_test": 0.9766123862033594,
+        "accuracy_test": 0.9803664921465969
+      },
+      "within_source_probe": {
+        "n_train": 1559,
+        "n_train_tumors": 287,
+        "recall_tumors": {
+          "n": 55,
+          "value": 0.8545454545454545,
+          "ci_low": 0.7454545454545455,
+          "ci_high": 0.9454545454545454
+        },
+        "specificity_notumor": {
+          "n": 254,
+          "value": 0.9960629921259843,
+          "ci_low": 0.9881889763779528,
+          "ci_high": 1.0
+        }
+      }
+    },
+    "dinov2": {
+      "source_probe": {
+        "n_train": 3847,
+        "n_test": 764,
+        "auc_test": 0.9961789973073472,
+        "accuracy_test": 0.9829842931937173
+      },
+      "within_source_probe": {
+        "n_train": 1559,
+        "n_train_tumors": 287,
+        "recall_tumors": {
+          "n": 55,
+          "value": 0.9090909090909091,
+          "ci_low": 0.8181818181818182,
+          "ci_high": 0.9818181818181818
+        },
+        "specificity_notumor": {
+          "n": 254,
+          "value": 0.9566929133858267,
+          "ci_low": 0.9291338582677166,
+          "ci_high": 0.9803149606299213
+        }
+      }
+    }
+  },
+  "note_s3": "S3 (estimation hors pli) sera mesurée à l'étape 11b-6b"
+}
