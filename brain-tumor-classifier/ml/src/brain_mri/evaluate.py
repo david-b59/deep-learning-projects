@@ -35,9 +35,9 @@ from sklearn.metrics import classification_report, confusion_matrix
 from torch import nn
 from torch.utils.data import DataLoader
 
-from brain_mri.config import Config, ModelConfig, load_config
+from brain_mri.config import Config, load_config
 from brain_mri.data import build_dataloaders
-from brain_mri.model import build_model
+from brain_mri.model import build_model_for_checkpoint
 from brain_mri.train import get_device, load_checkpoint
 
 LOGGER = logging.getLogger(__name__)
@@ -198,9 +198,8 @@ def evaluate(config: Config) -> dict:
         )
 
     # Les poids viennent du fichier : inutile de télécharger ceux d'ImageNet.
-    model = build_model(
-        len(bundle.class_names), ModelConfig(pretrained=False, freeze_backbone=False)
-    ).to(device)
+    # (le checkpoint indique l'architecture : ResNet-50, ou DINOv2-small gelé + tête linéaire).
+    model = build_model_for_checkpoint(checkpoint, config.model).to(device)
     model.load_state_dict(checkpoint["state_dict"])
 
     LOGGER.info("Évaluation sur le test (%d images)...", bundle.sizes["test"])

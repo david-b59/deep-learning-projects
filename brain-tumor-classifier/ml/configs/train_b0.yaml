@@ -1,0 +1,60 @@
+# Configuration B0 : une vue d'évaluation par image d'entraînement.
+# Modèle B (étape 11b-4) : DINOv2-small GELÉ + une couche linéaire (caractéristique = jeton CLS
+# + moyenne des jetons de patch = 768 valeurs). Même prétraitement head_crop et même découpage
+# que A1 : seul le modèle change. Sorties isolées dans models/b0, docs/figures/b0.
+# Lancement : uv run python -m brain_mri.train_dinov2 --config configs/train_b0.yaml
+
+data:
+  raw_dir: data/raw                 # jeu de données téléchargé (Training/ et Testing/)
+  processed_dir: data/processed/b0  # rapports générés (hors git), séparés du modèle en ligne
+  image_size: 224                   # taille d'entrée de DINOv2-small (16 x 16 patchs de 14 pixels)
+  batch_size: 32                    # nombre d'images par lot
+  val_fraction: 0.15                # part de Training gardée pour la validation
+  seed: 42                          # rend le découpage et le mélange reproductibles
+  num_workers: 0                    # processus de chargement des données (0 = processus principal)
+  flip_prob: 0.5                    # augmentation légère, entraînement uniquement
+  rotation_degrees: 10              # rotation aléatoire de ± 10 degrés
+  jitter: 0.1                       # variation de luminosité et de contraste
+  preprocessing: head_crop          # "legacy" (étirement, modèle en ligne) ou "head_crop" (tête recadrée, sans étirement)
+  split_manifest: ml/splits/kaggle_grouped.csv  # découpage honnête (CSV) ; absent = Training/Testing de Kaggle
+  # manifest_path_column: file      # colonnes du CSV (valeurs par défaut)
+  # manifest_label_column: class
+  # manifest_split_column: part     # les parties autres que train, val, test (conflit, purge) sont ignorées
+  head_crop_aug:                    # augmentation du mode head_crop (entraînement seulement)
+    crop_scale: [0.6, 1.0]          # RandomResizedCrop : part de l'image gardée
+    crop_ratio: [0.8, 1.25]         # RandomResizedCrop : rapport largeur/hauteur
+    zoomout_prob: 0.3               # RandomZoomOut : probabilité (fond noir)
+    zoomout_max: 1.4                # RandomZoomOut : dézoom maximal
+    flip_prob: 0.5                  # miroir horizontal
+    rotation_degrees: 10            # rotation de ± 10 degrés
+    contrast: 0.2                   # contraste : facteur entre 0,8 et 1,2
+    gamma_range: [0.8, 1.25]        # gamma tiré dans cette plage
+    blur_prob: 0.2                  # flou gaussien
+    blur_sigma: [0.1, 1.5]
+    noise_prob: 0.2                 # bruit gaussien
+    noise_sigma: 0.03
+    jpeg_prob: 0.3                  # compression JPEG
+    jpeg_quality: [50, 95]
+  mean: [0.485, 0.456, 0.406]       # statistiques d'ImageNet, exigées par le modèle pré-entraîné
+  std: [0.229, 0.224, 0.225]
+
+model:
+  architecture: dinov2_s            # DINOv2-small gelé + Linear(768, 4) (les autres clés model ne servent qu'au ResNet)
+
+dinov2:
+  n_views: 1                       # 1 vue, transformation d'évaluation
+  lr: 0.001                         # taux d'apprentissage d'AdamW
+  weight_decay: 0.0001              # régularisation d'AdamW
+  epochs: 100                       # maximum d'epochs (l'arrêt précoce arrête avant)
+  patience: 10                      # arrêt après 10 epochs sans amélioration de la loss de validation
+  min_delta: 0.0001                 # amélioration minimale de la loss de validation
+  batch_size: 256                   # caractéristiques par mini-lot (tête seule : très rapide)
+  extract_batch_size: 32            # images par lot pendant l'extraction DINOv2
+  extract_workers: 0                # 0 = chargement dans le processus principal (plus rapide sur ce PC : 0,2 s/image contre 1,2 avec 1 processus)
+  cache_dir: data/cache/dinov2_features  # caractéristiques en cache (hors git) : jamais recalculées
+
+training:
+  checkpoint_path: models/b0/best.pt  # tête seule + noms des classes (hors git)
+  figures_dir: docs/figures/b0        # courbe d'apprentissage et évaluation
+  mlflow_experiment: brain-tumor-11b  # expérience des 4 modèles comparés (A0, A1, B0, B1)
+  mlflow_dir: mlruns                # suivi des expériences MLflow (hors git)

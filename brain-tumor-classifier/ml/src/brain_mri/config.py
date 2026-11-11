@@ -97,6 +97,9 @@ class ModelConfig(BaseModel):
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
+    # Architecture : "resnet50" (modèle A) ou "dinov2_s" (modèle B : DINOv2-small gelé + une
+    # couche linéaire, voir brain_mri.dinov2_head). Les autres champs ne servent qu'au ResNet.
+    architecture: Literal["resnet50", "dinov2_s"] = "resnet50"
     pretrained: bool = True  # partir des poids ImageNet (False seulement dans les tests)
     freeze_backbone: bool = True  # au début, n'entraîner que la nouvelle tête
 
@@ -133,6 +136,29 @@ class TrainConfig(BaseModel):
         return value if value.is_absolute() else PROJECT_ROOT / value
 
 
+class Dinov2HeadConfig(BaseModel):
+    """Paramètres de la tête linéaire sur DINOv2 gelé (modèles B0 et B1, section ``dinov2``)."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    n_views: int = Field(1, ge=1)  # vues augmentées par image d'entraînement (1 = vue d'évaluation)
+    lr: float = Field(1e-3, gt=0)  # taux d'apprentissage d'AdamW
+    weight_decay: float = Field(1e-4, ge=0)  # régularisation L2 découplée d'AdamW
+    epochs: int = Field(100, gt=0)  # nombre maximal d'epochs (l'arrêt précoce peut arrêter avant)
+    patience: int = Field(10, ge=1)  # epochs sans progrès de la loss de validation avant l'arrêt
+    min_delta: float = Field(1e-4, ge=0)  # amélioration minimale de la loss de validation
+    batch_size: int = Field(256, gt=0)  # caractéristiques par mini-lot d'entraînement de la tête
+    extract_batch_size: int = Field(32, gt=0)  # images par lot lors de l'extraction (DINOv2)
+    extract_workers: int = Field(0, ge=0)  # processus de chargement pendant l'extraction
+    cache_dir: Path = Path("data/cache/dinov2_features")  # caractéristiques en cache (hors git)
+
+    @field_validator("cache_dir")
+    @classmethod
+    def _resolve_against_project_root(cls, value: Path) -> Path:
+        """Transforme un chemin relatif en chemin absolu, à partir de la racine du projet."""
+        return value if value.is_absolute() else PROJECT_ROOT / value
+
+
 class Config(BaseModel):
     """Objet de configuration racine : regroupe les sections du fichier YAML."""
 
@@ -141,6 +167,7 @@ class Config(BaseModel):
     data: DataConfig = DataConfig()
     model: ModelConfig = ModelConfig()
     training: TrainConfig = TrainConfig()
+    dinov2: Dinov2HeadConfig = Dinov2HeadConfig()  # lue seulement si architecture = dinov2_s
 
 
 def load_config(path: Path | str = DEFAULT_CONFIG_PATH) -> Config:
