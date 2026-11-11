@@ -1,0 +1,790 @@
+{
+  "checkpoint": "models/b_dfr/best.pt",
+  "preprocessing": "head_crop",
+  "class_names": [
+    "glioma",
+    "meningioma",
+    "notumor",
+    "pituitary"
+  ],
+  "transformations": {
+    "n": 1022,
+    "base_accuracy": 0.860078277886497,
+    "transformations": {
+      "miroir": {
+        "overall": {
+          "n": 1022,
+          "flips": 56,
+          "flip_rate": 0.0547945205479452,
+          "right_to_wrong": 21,
+          "wrong_to_right": 28
+        },
+        "accuracy": 0.8669275929549902,
+        "per_class": {
+          "glioma": {
+            "n": 257,
+            "flips": 18,
+            "flip_rate": 0.07003891050583658,
+            "right_to_wrong": 5,
+            "wrong_to_right": 8
+          },
+          "meningioma": {
+            "n": 254,
+            "flips": 28,
+            "flip_rate": 0.11023622047244094,
+            "right_to_wrong": 10,
+            "wrong_to_right": 17
+          },
+          "notumor": {
+            "n": 258,
+            "flips": 1,
+            "flip_rate": 0.003875968992248062,
+            "right_to_wrong": 1,
+            "wrong_to_right": 0
+          },
+          "pituitary": {
+            "n": 253,
+            "flips": 9,
+            "flip_rate": 0.03557312252964427,
+            "right_to_wrong": 5,
+            "wrong_to_right": 3
+          }
+        }
+      },
+      "bandes_noires_25": {
+        "overall": {
+          "n": 1022,
+          "flips": 26,
+          "flip_rate": 0.025440313111545987,
+          "right_to_wrong": 7,
+          "wrong_to_right": 17
+        },
+        "accuracy": 0.8698630136986302,
+        "per_class": {
+          "glioma": {
+            "n": 257,
+            "flips": 8,
+            "flip_rate": 0.0311284046692607,
+            "right_to_wrong": 3,
+            "wrong_to_right": 4
+          },
+          "meningioma": {
+            "n": 254,
+            "flips": 9,
+            "flip_rate": 0.03543307086614173,
+            "right_to_wrong": 1,
+            "wrong_to_right": 7
+          },
+          "notumor": {
+            "n": 258,
+            "flips": 0,
+            "flip_rate": 0.0,
+            "right_to_wrong": 0,
+            "wrong_to_right": 0
+          },
+          "pituitary": {
+            "n": 253,
+            "flips": 9,
+            "flip_rate": 0.03557312252964427,
+            "right_to_wrong": 3,
+            "wrong_to_right": 6
+          }
+        }
+      },
+      "zoom_0.85": {
+        "overall": {
+          "n": 1022,
+          "flips": 35,
+          "flip_rate": 0.03424657534246575,
+          "right_to_wrong": 9,
+          "wrong_to_right": 22
+        },
+        "accuracy": 0.87279843444227,
+        "per_class": {
+          "glioma": {
+            "n": 257,
+            "flips": 11,
+            "flip_rate": 0.042801556420233464,
+            "right_to_wrong": 1,
+            "wrong_to_right": 7
+          },
+          "meningioma": {
+            "n": 254,
+            "flips": 19,
+            "flip_rate": 0.07480314960629922,
+            "right_to_wrong": 5,
+            "wrong_to_right": 13
+          },
+          "notumor": {
+            "n": 258,
+            "flips": 1,
+            "flip_rate": 0.003875968992248062,
+            "right_to_wrong": 1,
+            "wrong_to_right": 0
+          },
+          "pituitary": {
+            "n": 253,
+            "flips": 4,
+            "flip_rate": 0.015810276679841896,
+            "right_to_wrong": 2,
+            "wrong_to_right": 2
+          }
+        }
+      },
+      "zoom_1.15": {
+        "overall": {
+          "n": 1022,
+          "flips": 84,
+          "flip_rate": 0.0821917808219178,
+          "right_to_wrong": 24,
+          "wrong_to_right": 53
+        },
+        "accuracy": 0.8884540117416829,
+        "per_class": {
+          "glioma": {
+            "n": 257,
+            "flips": 30,
+            "flip_rate": 0.11673151750972763,
+            "right_to_wrong": 16,
+            "wrong_to_right": 8
+          },
+          "meningioma": {
+            "n": 254,
+            "flips": 36,
+            "flip_rate": 0.14173228346456693,
+            "right_to_wrong": 6,
+            "wrong_to_right": 29
+          },
+          "notumor": {
+            "n": 258,
+            "flips": 1,
+            "flip_rate": 0.003875968992248062,
+            "right_to_wrong": 1,
+            "wrong_to_right": 0
+          },
+          "pituitary": {
+            "n": 253,
+            "flips": 17,
+            "flip_rate": 0.06719367588932806,
+            "right_to_wrong": 1,
+            "wrong_to_right": 16
+          }
+        }
+      },
+      "recadrage_decentre_90": {
+        "overall": {
+          "n": 1022,
+          "flips": 53,
+          "flip_rate": 0.05185909980430528,
+          "right_to_wrong": 18,
+          "wrong_to_right": 28
+        },
+        "accuracy": 0.8698630136986302,
+        "per_class": {
+          "glioma": {
+            "n": 257,
+            "flips": 15,
+            "flip_rate": 0.058365758754863814,
+            "right_to_wrong": 7,
+            "wrong_to_right": 3
+          },
+          "meningioma": {
+            "n": 254,
+            "flips": 24,
+            "flip_rate": 0.09448818897637795,
+            "right_to_wrong": 7,
+            "wrong_to_right": 15
+          },
+          "notumor": {
+            "n": 258,
+            "flips": 1,
+            "flip_rate": 0.003875968992248062,
+            "right_to_wrong": 1,
+            "wrong_to_right": 0
+          },
+          "pituitary": {
+            "n": 253,
+            "flips": 13,
+            "flip_rate": 0.05138339920948617,
+            "right_to_wrong": 3,
+            "wrong_to_right": 10
+          }
+        }
+      },
+      "etirement_+20": {
+        "overall": {
+          "n": 1022,
+          "flips": 82,
+          "flip_rate": 0.08023483365949119,
+          "right_to_wrong": 34,
+          "wrong_to_right": 44
+        },
+        "accuracy": 0.8698630136986302,
+        "per_class": {
+          "glioma": {
+            "n": 257,
+            "flips": 21,
+            "flip_rate": 0.08171206225680934,
+            "right_to_wrong": 10,
+            "wrong_to_right": 9
+          },
+          "meningioma": {
+            "n": 254,
+            "flips": 43,
+            "flip_rate": 0.16929133858267717,
+            "right_to_wrong": 17,
+            "wrong_to_right": 25
+          },
+          "notumor": {
+            "n": 258,
+            "flips": 4,
+            "flip_rate": 0.015503875968992248,
+            "right_to_wrong": 4,
+            "wrong_to_right": 0
+          },
+          "pituitary": {
+            "n": 253,
+            "flips": 14,
+            "flip_rate": 0.05533596837944664,
+            "right_to_wrong": 3,
+            "wrong_to_right": 10
+          }
+        }
+      },
+      "etirement_-20": {
+        "overall": {
+          "n": 1022,
+          "flips": 75,
+          "flip_rate": 0.07338551859099804,
+          "right_to_wrong": 36,
+          "wrong_to_right": 35
+        },
+        "accuracy": 0.8590998043052838,
+        "per_class": {
+          "glioma": {
+            "n": 257,
+            "flips": 20,
+            "flip_rate": 0.07782101167315175,
+            "right_to_wrong": 12,
+            "wrong_to_right": 7
+          },
+          "meningioma": {
+            "n": 254,
+            "flips": 36,
+            "flip_rate": 0.14173228346456693,
+            "right_to_wrong": 9,
+            "wrong_to_right": 25
+          },
+          "notumor": {
+            "n": 258,
+            "flips": 5,
+            "flip_rate": 0.01937984496124031,
+            "right_to_wrong": 5,
+            "wrong_to_right": 0
+          },
+          "pituitary": {
+            "n": 253,
+            "flips": 14,
+            "flip_rate": 0.05533596837944664,
+            "right_to_wrong": 10,
+            "wrong_to_right": 3
+          }
+        }
+      },
+      "jpeg_50": {
+        "overall": {
+          "n": 1022,
+          "flips": 39,
+          "flip_rate": 0.03816046966731898,
+          "right_to_wrong": 16,
+          "wrong_to_right": 22
+        },
+        "accuracy": 0.8659491193737769,
+        "per_class": {
+          "glioma": {
+            "n": 257,
+            "flips": 8,
+            "flip_rate": 0.0311284046692607,
+            "right_to_wrong": 4,
+            "wrong_to_right": 3
+          },
+          "meningioma": {
+            "n": 254,
+            "flips": 18,
+            "flip_rate": 0.07086614173228346,
+            "right_to_wrong": 9,
+            "wrong_to_right": 9
+          },
+          "notumor": {
+            "n": 258,
+            "flips": 4,
+            "flip_rate": 0.015503875968992248,
+            "right_to_wrong": 3,
+            "wrong_to_right": 1
+          },
+          "pituitary": {
+            "n": 253,
+            "flips": 9,
+            "flip_rate": 0.03557312252964427,
+            "right_to_wrong": 0,
+            "wrong_to_right": 9
+          }
+        }
+      }
+    }
+  },
+  "pmram": {
+    "all": {
+      "safe_cosine": 0.984,
+      "n_images": 635,
+      "safe": {
+        "n": 291,
+        "twin_accuracy": 0.8694158075601375,
+        "copy_accuracy": 0.8384879725085911,
+        "flips": 17,
+        "flip_rate": 0.058419243986254296,
+        "right_to_wrong": 13,
+        "wrong_to_right": 4
+      },
+      "safe_per_class": {
+        "glioma": {
+          "n": 64,
+          "twin_accuracy": 0.78125,
+          "copy_accuracy": 0.734375,
+          "flips": 3,
+          "flip_rate": 0.046875,
+          "right_to_wrong": 3,
+          "wrong_to_right": 0
+        },
+        "meningioma": {
+          "n": 213,
+          "twin_accuracy": 0.8873239436619719,
+          "copy_accuracy": 0.8591549295774648,
+          "flips": 14,
+          "flip_rate": 0.06572769953051644,
+          "right_to_wrong": 10,
+          "wrong_to_right": 4
+        },
+        "notumor": {
+          "n": 14,
+          "twin_accuracy": 1.0,
+          "copy_accuracy": 1.0,
+          "flips": 0,
+          "flip_rate": 0.0,
+          "right_to_wrong": 0,
+          "wrong_to_right": 0
+        },
+        "pituitary": {
+          "n": 0,
+          "twin_accuracy": null,
+          "copy_accuracy": null,
+          "flips": 0,
+          "flip_rate": null,
+          "right_to_wrong": 0,
+          "wrong_to_right": 0
+        }
+      },
+      "by_cosine_bin": {
+        "<0,90": {
+          "n_all": 42,
+          "same_class_twin": {
+            "n": 33,
+            "twin_accuracy": 0.9090909090909091,
+            "copy_accuracy": 0.8484848484848485,
+            "flips": 6,
+            "flip_rate": 0.18181818181818182,
+            "right_to_wrong": 4,
+            "wrong_to_right": 2
+          }
+        },
+        "0,90-0,94": {
+          "n_all": 34,
+          "same_class_twin": {
+            "n": 32,
+            "twin_accuracy": 0.90625,
+            "copy_accuracy": 0.96875,
+            "flips": 2,
+            "flip_rate": 0.0625,
+            "right_to_wrong": 0,
+            "wrong_to_right": 2
+          }
+        },
+        "0,94-0,96": {
+          "n_all": 61,
+          "same_class_twin": {
+            "n": 61,
+            "twin_accuracy": 0.7540983606557377,
+            "copy_accuracy": 0.819672131147541,
+            "flips": 7,
+            "flip_rate": 0.11475409836065574,
+            "right_to_wrong": 1,
+            "wrong_to_right": 5
+          }
+        },
+        "0,96-0,98": {
+          "n_all": 149,
+          "same_class_twin": {
+            "n": 149,
+            "twin_accuracy": 0.8859060402684564,
+            "copy_accuracy": 0.8791946308724832,
+            "flips": 16,
+            "flip_rate": 0.10738255033557047,
+            "right_to_wrong": 8,
+            "wrong_to_right": 7
+          }
+        },
+        ">=0,98": {
+          "n_all": 349,
+          "same_class_twin": {
+            "n": 349,
+            "twin_accuracy": 0.8595988538681948,
+            "copy_accuracy": 0.839541547277937,
+            "flips": 20,
+            "flip_rate": 0.05730659025787966,
+            "right_to_wrong": 13,
+            "wrong_to_right": 6
+          }
+        }
+      }
+    },
+    "twin_in_train": {
+      "safe_cosine": 0.984,
+      "n_images": 483,
+      "safe": {
+        "n": 232,
+        "twin_accuracy": 0.8793103448275862,
+        "copy_accuracy": 0.8405172413793104,
+        "flips": 15,
+        "flip_rate": 0.06465517241379311,
+        "right_to_wrong": 12,
+        "wrong_to_right": 3
+      },
+      "safe_per_class": {
+        "glioma": {
+          "n": 54,
+          "twin_accuracy": 0.8333333333333334,
+          "copy_accuracy": 0.7777777777777778,
+          "flips": 3,
+          "flip_rate": 0.05555555555555555,
+          "right_to_wrong": 3,
+          "wrong_to_right": 0
+        },
+        "meningioma": {
+          "n": 167,
+          "twin_accuracy": 0.8862275449101796,
+          "copy_accuracy": 0.8502994011976048,
+          "flips": 12,
+          "flip_rate": 0.0718562874251497,
+          "right_to_wrong": 9,
+          "wrong_to_right": 3
+        },
+        "notumor": {
+          "n": 11,
+          "twin_accuracy": 1.0,
+          "copy_accuracy": 1.0,
+          "flips": 0,
+          "flip_rate": 0.0,
+          "right_to_wrong": 0,
+          "wrong_to_right": 0
+        },
+        "pituitary": {
+          "n": 0,
+          "twin_accuracy": null,
+          "copy_accuracy": null,
+          "flips": 0,
+          "flip_rate": null,
+          "right_to_wrong": 0,
+          "wrong_to_right": 0
+        }
+      },
+      "by_cosine_bin": {
+        "<0,90": {
+          "n_all": 31,
+          "same_class_twin": {
+            "n": 24,
+            "twin_accuracy": 0.875,
+            "copy_accuracy": 0.875,
+            "flips": 4,
+            "flip_rate": 0.16666666666666666,
+            "right_to_wrong": 2,
+            "wrong_to_right": 2
+          }
+        },
+        "0,90-0,94": {
+          "n_all": 26,
+          "same_class_twin": {
+            "n": 24,
+            "twin_accuracy": 0.9583333333333334,
+            "copy_accuracy": 1.0,
+            "flips": 1,
+            "flip_rate": 0.041666666666666664,
+            "right_to_wrong": 0,
+            "wrong_to_right": 1
+          }
+        },
+        "0,94-0,96": {
+          "n_all": 38,
+          "same_class_twin": {
+            "n": 38,
+            "twin_accuracy": 0.8421052631578947,
+            "copy_accuracy": 0.9210526315789473,
+            "flips": 3,
+            "flip_rate": 0.07894736842105263,
+            "right_to_wrong": 0,
+            "wrong_to_right": 3
+          }
+        },
+        "0,96-0,98": {
+          "n_all": 111,
+          "same_class_twin": {
+            "n": 111,
+            "twin_accuracy": 0.9459459459459459,
+            "copy_accuracy": 0.9369369369369369,
+            "flips": 7,
+            "flip_rate": 0.06306306306306306,
+            "right_to_wrong": 4,
+            "wrong_to_right": 3
+          }
+        },
+        ">=0,98": {
+          "n_all": 277,
+          "same_class_twin": {
+            "n": 277,
+            "twin_accuracy": 0.8772563176895307,
+            "copy_accuracy": 0.8447653429602888,
+            "flips": 16,
+            "flip_rate": 0.05776173285198556,
+            "right_to_wrong": 12,
+            "wrong_to_right": 3
+          }
+        }
+      }
+    },
+    "twin_in_val": {
+      "safe_cosine": 0.984,
+      "n_images": 70,
+      "safe": {
+        "n": 31,
+        "twin_accuracy": 0.8387096774193549,
+        "copy_accuracy": 0.8709677419354839,
+        "flips": 1,
+        "flip_rate": 0.03225806451612903,
+        "right_to_wrong": 0,
+        "wrong_to_right": 1
+      },
+      "safe_per_class": {
+        "glioma": {
+          "n": 5,
+          "twin_accuracy": 0.4,
+          "copy_accuracy": 0.4,
+          "flips": 0,
+          "flip_rate": 0.0,
+          "right_to_wrong": 0,
+          "wrong_to_right": 0
+        },
+        "meningioma": {
+          "n": 25,
+          "twin_accuracy": 0.92,
+          "copy_accuracy": 0.96,
+          "flips": 1,
+          "flip_rate": 0.04,
+          "right_to_wrong": 0,
+          "wrong_to_right": 1
+        },
+        "notumor": {
+          "n": 1,
+          "twin_accuracy": 1.0,
+          "copy_accuracy": 1.0,
+          "flips": 0,
+          "flip_rate": 0.0,
+          "right_to_wrong": 0,
+          "wrong_to_right": 0
+        },
+        "pituitary": {
+          "n": 0,
+          "twin_accuracy": null,
+          "copy_accuracy": null,
+          "flips": 0,
+          "flip_rate": null,
+          "right_to_wrong": 0,
+          "wrong_to_right": 0
+        }
+      },
+      "by_cosine_bin": {
+        "<0,90": {
+          "n_all": 7,
+          "same_class_twin": {
+            "n": 5,
+            "twin_accuracy": 1.0,
+            "copy_accuracy": 0.6,
+            "flips": 2,
+            "flip_rate": 0.4,
+            "right_to_wrong": 2,
+            "wrong_to_right": 0
+          }
+        },
+        "0,90-0,94": {
+          "n_all": 1,
+          "same_class_twin": {
+            "n": 1,
+            "twin_accuracy": 1.0,
+            "copy_accuracy": 1.0,
+            "flips": 0,
+            "flip_rate": 0.0,
+            "right_to_wrong": 0,
+            "wrong_to_right": 0
+          }
+        },
+        "0,94-0,96": {
+          "n_all": 9,
+          "same_class_twin": {
+            "n": 9,
+            "twin_accuracy": 0.5555555555555556,
+            "copy_accuracy": 0.6666666666666666,
+            "flips": 4,
+            "flip_rate": 0.4444444444444444,
+            "right_to_wrong": 1,
+            "wrong_to_right": 2
+          }
+        },
+        "0,96-0,98": {
+          "n_all": 15,
+          "same_class_twin": {
+            "n": 15,
+            "twin_accuracy": 0.5333333333333333,
+            "copy_accuracy": 0.5333333333333333,
+            "flips": 3,
+            "flip_rate": 0.2,
+            "right_to_wrong": 1,
+            "wrong_to_right": 1
+          }
+        },
+        ">=0,98": {
+          "n_all": 38,
+          "same_class_twin": {
+            "n": 38,
+            "twin_accuracy": 0.8157894736842105,
+            "copy_accuracy": 0.8947368421052632,
+            "flips": 3,
+            "flip_rate": 0.07894736842105263,
+            "right_to_wrong": 0,
+            "wrong_to_right": 3
+          }
+        }
+      }
+    },
+    "twin_in_test": {
+      "safe_cosine": 0.984,
+      "n_images": 82,
+      "safe": {
+        "n": 28,
+        "twin_accuracy": 0.8214285714285714,
+        "copy_accuracy": 0.7857142857142857,
+        "flips": 1,
+        "flip_rate": 0.03571428571428571,
+        "right_to_wrong": 1,
+        "wrong_to_right": 0
+      },
+      "safe_per_class": {
+        "glioma": {
+          "n": 5,
+          "twin_accuracy": 0.6,
+          "copy_accuracy": 0.6,
+          "flips": 0,
+          "flip_rate": 0.0,
+          "right_to_wrong": 0,
+          "wrong_to_right": 0
+        },
+        "meningioma": {
+          "n": 21,
+          "twin_accuracy": 0.8571428571428571,
+          "copy_accuracy": 0.8095238095238095,
+          "flips": 1,
+          "flip_rate": 0.047619047619047616,
+          "right_to_wrong": 1,
+          "wrong_to_right": 0
+        },
+        "notumor": {
+          "n": 2,
+          "twin_accuracy": 1.0,
+          "copy_accuracy": 1.0,
+          "flips": 0,
+          "flip_rate": 0.0,
+          "right_to_wrong": 0,
+          "wrong_to_right": 0
+        },
+        "pituitary": {
+          "n": 0,
+          "twin_accuracy": null,
+          "copy_accuracy": null,
+          "flips": 0,
+          "flip_rate": null,
+          "right_to_wrong": 0,
+          "wrong_to_right": 0
+        }
+      },
+      "by_cosine_bin": {
+        "<0,90": {
+          "n_all": 4,
+          "same_class_twin": {
+            "n": 4,
+            "twin_accuracy": 1.0,
+            "copy_accuracy": 1.0,
+            "flips": 0,
+            "flip_rate": 0.0,
+            "right_to_wrong": 0,
+            "wrong_to_right": 0
+          }
+        },
+        "0,90-0,94": {
+          "n_all": 7,
+          "same_class_twin": {
+            "n": 7,
+            "twin_accuracy": 0.7142857142857143,
+            "copy_accuracy": 0.8571428571428571,
+            "flips": 1,
+            "flip_rate": 0.14285714285714285,
+            "right_to_wrong": 0,
+            "wrong_to_right": 1
+          }
+        },
+        "0,94-0,96": {
+          "n_all": 14,
+          "same_class_twin": {
+            "n": 14,
+            "twin_accuracy": 0.6428571428571429,
+            "copy_accuracy": 0.6428571428571429,
+            "flips": 0,
+            "flip_rate": 0.0,
+            "right_to_wrong": 0,
+            "wrong_to_right": 0
+          }
+        },
+        "0,96-0,98": {
+          "n_all": 23,
+          "same_class_twin": {
+            "n": 23,
+            "twin_accuracy": 0.8260869565217391,
+            "copy_accuracy": 0.8260869565217391,
+            "flips": 6,
+            "flip_rate": 0.2608695652173913,
+            "right_to_wrong": 3,
+            "wrong_to_right": 3
+          }
+        },
+        ">=0,98": {
+          "n_all": 34,
+          "same_class_twin": {
+            "n": 34,
+            "twin_accuracy": 0.7647058823529411,
+            "copy_accuracy": 0.7352941176470589,
+            "flips": 1,
+            "flip_rate": 0.029411764705882353,
+            "right_to_wrong": 1,
+            "wrong_to_right": 0
+          }
+        }
+      }
+    }
+  }
+}

@@ -41,6 +41,9 @@ MODELS = {  # nom : (description, fichier d'invariance)
     "b0": ("DINOv2-small gelé, 1 vue", "invariance_head_crop.json"),
     "b1": ("DINOv2-small gelé, 8 vues augmentées", "invariance_head_crop.json"),
 }
+EXTRA_MODELS = {  # modèles ajoutés après la décision 11b-5 : jamais dans model_comparison_11b.json
+    "b_dfr": ("DINOv2-small gelé, tête repondérée par groupe (DFR)", "invariance_head_crop.json"),
+}
 
 
 def pct(value: float) -> str:

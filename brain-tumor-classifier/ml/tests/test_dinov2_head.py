@@ -185,3 +185,31 @@ def test_default_architecture_is_still_resnet50() -> None:
     assert hasattr(resnet, "fc")
     checkpoint = {"class_names": CLASSES}  # ancien checkpoint : pas de clé « architecture »
     assert hasattr(build_model_for_checkpoint(checkpoint), "fc")
+
+
+def test_train_head_sample_weights_none_or_uniform_changes_nothing() -> None:
+    """Sans poids, le résultat est strictement celui d'avant ; des poids égaux donnent le même."""
+    torch.manual_seed(2)
+    labels = torch.arange(120) % N_CLASSES
+    x = torch.randn(N_CLASSES, 16)[labels] * 2 + torch.randn(120, 16)
+    cfg = Dinov2HeadConfig(epochs=5, patience=5, batch_size=32, lr=1e-2)
+    args = (x[:90], labels[:90], x[90:], labels[90:], N_CLASSES, cfg)
+    plain = train_head(*args, seed=7)
+    explicit_none = train_head(*args, seed=7, sample_weights=None)
+    assert plain.history[-1]["train_loss"] == explicit_none.history[-1]["train_loss"]
+    assert torch.equal(plain.head.weight, explicit_none.head.weight)
+    uniform = train_head(*args, seed=7, sample_weights=torch.full((90,), 0.01))
+    assert torch.allclose(plain.head.weight, uniform.head.weight, atol=1e-5)
+
+
+def test_train_head_sample_weights_shift_the_decision() -> None:
+    """Un poids fort sur une classe rare la fait mieux reconnaître qu'avec des poids égaux."""
+    torch.manual_seed(3)
+    labels = torch.cat([torch.zeros(180, dtype=torch.long), torch.ones(20, dtype=torch.long)])
+    x = torch.randn(200, 4) + labels[:, None].float() * 0.8  # classes qui se chevauchent
+    cfg = Dinov2HeadConfig(epochs=40, patience=40, batch_size=32, lr=1e-2)
+    weights = torch.where(labels == 1, 9.0, 1.0)  # la classe 1 pèse autant que la classe 0
+    plain = train_head(x, labels, x, labels, 2, cfg, seed=0)
+    weighted = train_head(x, labels, x, labels, 2, cfg, seed=0, sample_weights=weights)
+    recall = lambda head: (head(x[labels == 1]).argmax(dim=1) == 1).float().mean()  # noqa: E731
+    assert recall(weighted.head) > recall(plain.head)
