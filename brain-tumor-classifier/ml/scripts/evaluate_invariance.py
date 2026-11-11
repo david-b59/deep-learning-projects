@@ -30,7 +30,7 @@ from pathlib import Path
 import numpy as np
 import torch
 
-from brain_mri.config import Config, load_config
+from brain_mri.config import PROJECT_ROOT, Config, load_config
 from brain_mri.data import read_split_manifest
 from brain_mri.invariance import analyze_pmram_by_twin_part, measure_transformations
 from brain_mri.model import build_model_for_checkpoint, get_device, load_checkpoint
@@ -254,7 +254,14 @@ def main(argv: list[str] | None = None) -> dict:
     if args.max_images:
         paths, labels = paths[: args.max_images], labels[: args.max_images]
     transform = build_transforms(config.data, train=False)
-    report: dict = {"checkpoint": str(path), "preprocessing": mode, "class_names": class_names}
+    shown = path.resolve()  # chemin écrit dans le JSON : relatif à la racine du projet si possible
+    if shown.is_relative_to(PROJECT_ROOT):
+        shown = shown.relative_to(PROJECT_ROOT)
+    report: dict = {
+        "checkpoint": shown.as_posix(),
+        "preprocessing": mode,
+        "class_names": class_names,
+    }
     report["transformations"] = measure_transformations(
         model, paths, labels, transform, device, class_names, config.data.batch_size
     )

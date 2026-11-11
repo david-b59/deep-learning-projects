@@ -407,6 +407,7 @@ def train_head(
     config: Dinov2HeadConfig,
     seed: int = 42,
     on_epoch: Callable[[dict], None] | None = None,
+    sample_weights: torch.Tensor | None = None,
 ) -> HeadTrainingResult:
     """Entraîne la couche linéaire sur des caractéristiques déjà calculées.
 
@@ -422,6 +423,11 @@ def train_head(
         config: Réglages (lr, weight_decay, epochs, patience, min_delta, batch_size).
         seed: Graine (initialisation de la tête et mélange des lots).
         on_epoch: Fonction optionnelle appelée avec la ligne d'historique de chaque epoch.
+        sample_weights: Poids par exemple d'entraînement ``(M,)`` (repondération des groupes,
+            étape 11b-6b). La perte d'un lot est alors la moyenne pondérée des entropies croisées
+            (somme des ``poids x perte`` divisée par la somme des poids du lot : l'échelle des
+            poids n'a pas d'importance). ``None`` (défaut) : comportement strictement inchangé.
+            La validation et l'arrêt précoce restent non pondérés.
 
     Returns:
         Un :class:`HeadTrainingResult`.
@@ -431,6 +437,7 @@ def train_head(
     head = nn.Linear(train_x.shape[1], n_classes)
     optimizer = torch.optim.AdamW(head.parameters(), lr=config.lr, weight_decay=config.weight_decay)
     criterion = nn.CrossEntropyLoss()
+    per_sample_loss = nn.CrossEntropyLoss(reduction="none")  # utilisée seulement avec des poids
 
     history: list[dict] = []
     best = {"loss": float("inf"), "acc": 0.0, "epoch": 0, "state": head_state_dict(head)}
@@ -439,21 +446,29 @@ def train_head(
         start = time.time()
         head.train()
         order = torch.randperm(len(train_x), generator=generator)
-        total_loss, correct = 0.0, 0
+        total_loss, correct, total_weight = 0.0, 0, 0.0
         for first in range(0, len(order), config.batch_size):
             batch = order[first : first + config.batch_size]
             optimizer.zero_grad()
             logits = head(train_x[batch])
-            loss = criterion(logits, train_y[batch])
+            if sample_weights is None:
+                loss = criterion(logits, train_y[batch])
+                batch_weight = float(len(batch))  # pondéré par la taille du lot
+                total_loss += loss.item() * batch_weight
+            else:
+                weights = sample_weights[batch]
+                loss = (per_sample_loss(logits, train_y[batch]) * weights).sum() / weights.sum()
+                batch_weight = float(weights.sum())  # la loss d'epoch est une moyenne pondérée
+                total_loss += loss.item() * batch_weight
+            total_weight += batch_weight
             loss.backward()
             optimizer.step()
-            total_loss += loss.item() * len(batch)  # pondéré par la taille du lot
             correct += (logits.argmax(dim=1) == train_y[batch]).sum().item()
         val_loss, val_acc = _evaluate_head(head, val_x, val_y, criterion)
         row = {
             "phase": "head",
             "epoch": epoch,
-            "train_loss": total_loss / len(train_x),
+            "train_loss": total_loss / total_weight,
             "train_acc": correct / len(train_x),
             "val_loss": val_loss,
             "val_acc": val_acc,

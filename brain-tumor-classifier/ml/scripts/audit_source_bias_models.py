@@ -57,6 +57,9 @@ MODELS = {  # modèle : (jeu de caractéristiques, point de contrôle, préfixe 
     "b0": ("dinov2", ROOT / "models" / "b0" / "best.pt", "head"),
     "b1": ("dinov2", ROOT / "models" / "b1" / "best.pt", "head"),
 }
+EXTRA_MODELS = {  # ajouté à l'étape 11b-6b : jamais dans source_bias_11b.json (voir report_dfr.py)
+    "b_dfr": ("dinov2", ROOT / "models" / "b_dfr" / "best.pt", "head"),
+}
 
 
 def pct(value: float | None) -> str:
