@@ -1,0 +1,444 @@
+{
+  "test": {
+    "n": 1022,
+    "n_strict": 857,
+    "strict_cosine": 0.94
+  },
+  "reference_model": "a0",
+  "online_model_honest_reference": {
+    "n": 347,
+    "accuracy": 0.8270893371757925,
+    "ci_low": 0.7867435158501441,
+    "ci_high": 0.8674351585014409
+  },
+  "models": {
+    "a0": {
+      "description": "ResNet-50, recette actuelle",
+      "metrics": {
+        "accuracy": {
+          "n": 1022,
+          "value": 0.9187866927592955,
+          "ci_low": 0.901174168297456,
+          "ci_high": 0.9344422700587084
+        },
+        "accuracy_strict": {
+          "n": 857,
+          "value": 0.911318553092182,
+          "ci_low": 0.8914819136522754,
+          "ci_high": 0.9299883313885647
+        },
+        "per_class": {
+          "glioma": {
+            "n": 257,
+            "value": 0.8988326848249028,
+            "ci_low": 0.8599221789883269,
+            "ci_high": 0.933852140077821
+          },
+          "meningioma": {
+            "n": 254,
+            "value": 0.7874015748031497,
+            "ci_low": 0.7362204724409449,
+            "ci_high": 0.8347440944881884
+          },
+          "notumor": {
+            "n": 258,
+            "value": 0.9961240310077519,
+            "ci_low": 0.9883720930232558,
+            "ci_high": 1.0
+          },
+          "pituitary": {
+            "n": 253,
+            "value": 0.9920948616600791,
+            "ci_low": 0.9802371541501976,
+            "ci_high": 1.0
+          }
+        },
+        "tumor_predicted_notumor": 15,
+        "notumor_recall": 0.9961240310077519,
+        "tumor_gap_512_minus_other": {
+          "n_a": 709,
+          "n_b": 55,
+          "value": 0.35455827670214135,
+          "ci_low": 0.22301897679189642,
+          "ci_high": 0.4846557250929606
+        }
+      },
+      "diff_vs_a0": null,
+      "criteria": {
+        "C1": {
+          "passed": null,
+          "reason": "modèle de référence"
+        },
+        "C2": {
+          "pmram_flip_rate": 0.13058419243986255,
+          "n": 291,
+          "passed": false
+        },
+        "C3": {
+          "flip_rates": {
+            "miroir": 0.033268101761252444,
+            "bandes_noires_25": 0.2602739726027397,
+            "zoom_0.85": 0.06653620352250489,
+            "zoom_1.15": 0.04500978473581213,
+            "recadrage_decentre_90": 0.046966731898238745,
+            "etirement_+20": 0.0009784735812133072,
+            "etirement_-20": 0.005870841487279843,
+            "jpeg_50": 0.016634050880626222
+          },
+          "failed": [
+            "bandes_noires_25",
+            "zoom_0.85"
+          ],
+          "passed": false
+        },
+        "C4": {
+          "tumor_predicted_notumor": 15,
+          "reference": 15,
+          "notumor_recall": 0.9961240310077519,
+          "passed": true
+        },
+        "C5": {
+          "gap": {
+            "n_a": 709,
+            "n_b": 55,
+            "value": 0.35455827670214135,
+            "ci_low": 0.22301897679189642,
+            "ci_high": 0.4846557250929606
+          },
+          "passed": false
+        }
+      },
+      "accuracy": 0.9187866927592955,
+      "pmram_flip_rate": 0.13058419243986255
+    },
+    "a1": {
+      "description": "ResNet-50 + recadrage sur la tête",
+      "metrics": {
+        "accuracy": {
+          "n": 1022,
+          "value": 0.9031311154598826,
+          "ci_low": 0.8845401174168297,
+          "ci_high": 0.9207436399217221
+        },
+        "accuracy_strict": {
+          "n": 857,
+          "value": 0.8903150525087514,
+          "ci_low": 0.8693115519253208,
+          "ci_high": 0.9101516919486581
+        },
+        "per_class": {
+          "glioma": {
+            "n": 257,
+            "value": 0.867704280155642,
+            "ci_low": 0.8249027237354085,
+            "ci_high": 0.9066147859922179
+          },
+          "meningioma": {
+            "n": 254,
+            "value": 0.7834645669291339,
+            "ci_low": 0.7322834645669292,
+            "ci_high": 0.8346456692913385
+          },
+          "notumor": {
+            "n": 258,
+            "value": 0.9922480620155039,
+            "ci_low": 0.9806201550387597,
+            "ci_high": 1.0
+          },
+          "pituitary": {
+            "n": 253,
+            "value": 0.9683794466403162,
+            "ci_low": 0.9446640316205533,
+            "ci_high": 0.9881422924901185
+          }
+        },
+        "tumor_predicted_notumor": 22,
+        "notumor_recall": 0.9922480620155039,
+        "tumor_gap_512_minus_other": {
+          "n_a": 709,
+          "n_b": 55,
+          "value": 0.2550326964995512,
+          "ci_low": 0.12917040646236688,
+          "ci_high": 0.3823054237722785
+        }
+      },
+      "diff_vs_a0": {
+        "n": 1022,
+        "value": -0.015655577299412915,
+        "ci_low": -0.030332681017612523,
+        "ci_high": -0.0009784735812133072
+      },
+      "criteria": {
+        "C1": {
+          "gain": -0.015655577299412915,
+          "ci": [
+            -0.030332681017612523,
+            -0.0009784735812133072
+          ],
+          "passed": false
+        },
+        "C2": {
+          "pmram_flip_rate": 0.020618556701030927,
+          "n": 291,
+          "passed": true
+        },
+        "C3": {
+          "flip_rates": {
+            "miroir": 0.053816046966731895,
+            "bandes_noires_25": 0.011741682974559686,
+            "zoom_0.85": 0.02054794520547945,
+            "zoom_1.15": 0.03816046966731898,
+            "recadrage_decentre_90": 0.029354207436399216,
+            "etirement_+20": 0.033268101761252444,
+            "etirement_-20": 0.043052837573385516,
+            "jpeg_50": 0.021526418786692758
+          },
+          "failed": [
+            "miroir"
+          ],
+          "passed": false
+        },
+        "C4": {
+          "tumor_predicted_notumor": 22,
+          "reference": 15,
+          "notumor_recall": 0.9922480620155039,
+          "passed": false
+        },
+        "C5": {
+          "gap": {
+            "n_a": 709,
+            "n_b": 55,
+            "value": 0.2550326964995512,
+            "ci_low": 0.12917040646236688,
+            "ci_high": 0.3823054237722785
+          },
+          "passed": false
+        }
+      },
+      "accuracy": 0.9031311154598826,
+      "pmram_flip_rate": 0.020618556701030927
+    },
+    "b0": {
+      "description": "DINOv2-small gelé, 1 vue",
+      "metrics": {
+        "accuracy": {
+          "n": 1022,
+          "value": 0.8855185909980431,
+          "ci_low": 0.8649706457925636,
+          "ci_high": 0.9050880626223092
+        },
+        "accuracy_strict": {
+          "n": 857,
+          "value": 0.8728121353558926,
+          "ci_low": 0.8494749124854143,
+          "ci_high": 0.8949824970828472
+        },
+        "per_class": {
+          "glioma": {
+            "n": 257,
+            "value": 0.8210116731517509,
+            "ci_low": 0.77431906614786,
+            "ci_high": 0.867704280155642
+          },
+          "meningioma": {
+            "n": 254,
+            "value": 0.7992125984251969,
+            "ci_low": 0.7519685039370079,
+            "ci_high": 0.8464566929133859
+          },
+          "notumor": {
+            "n": 258,
+            "value": 0.9767441860465116,
+            "ci_low": 0.9573643410852714,
+            "ci_high": 0.9922480620155039
+          },
+          "pituitary": {
+            "n": 253,
+            "value": 0.9446640316205533,
+            "ci_low": 0.9169960474308301,
+            "ci_high": 0.9723320158102767
+          }
+        },
+        "tumor_predicted_notumor": 8,
+        "notumor_recall": 0.9767441860465116,
+        "tumor_gap_512_minus_other": {
+          "n_a": 709,
+          "n_b": 55,
+          "value": 0.19610206436722655,
+          "ci_low": 0.07149249903833822,
+          "ci_high": 0.32070778304910885
+        }
+      },
+      "diff_vs_a0": {
+        "n": 1022,
+        "value": -0.033268101761252444,
+        "ci_low": -0.05185909980430528,
+        "ci_high": -0.014677103718199608
+      },
+      "criteria": {
+        "C1": {
+          "gain": -0.033268101761252444,
+          "ci": [
+            -0.05185909980430528,
+            -0.014677103718199608
+          ],
+          "passed": false
+        },
+        "C2": {
+          "pmram_flip_rate": 0.058419243986254296,
+          "n": 291,
+          "passed": true
+        },
+        "C3": {
+          "flip_rates": {
+            "miroir": 0.06360078277886497,
+            "bandes_noires_25": 0.02054794520547945,
+            "zoom_0.85": 0.025440313111545987,
+            "zoom_1.15": 0.049902152641878667,
+            "recadrage_decentre_90": 0.03718199608610567,
+            "etirement_+20": 0.07534246575342465,
+            "etirement_-20": 0.11154598825831702,
+            "jpeg_50": 0.03424657534246575
+          },
+          "failed": [
+            "miroir",
+            "etirement_-20"
+          ],
+          "passed": false
+        },
+        "C4": {
+          "tumor_predicted_notumor": 8,
+          "reference": 15,
+          "notumor_recall": 0.9767441860465116,
+          "passed": true
+        },
+        "C5": {
+          "gap": {
+            "n_a": 709,
+            "n_b": 55,
+            "value": 0.19610206436722655,
+            "ci_low": 0.07149249903833822,
+            "ci_high": 0.32070778304910885
+          },
+          "passed": false
+        }
+      },
+      "accuracy": 0.8855185909980431,
+      "pmram_flip_rate": 0.058419243986254296
+    },
+    "b1": {
+      "description": "DINOv2-small gelé, 8 vues augmentées",
+      "metrics": {
+        "accuracy": {
+          "n": 1022,
+          "value": 0.87279843444227,
+          "ci_low": 0.8522504892367906,
+          "ci_high": 0.8923679060665362
+        },
+        "accuracy_strict": {
+          "n": 857,
+          "value": 0.8541423570595099,
+          "ci_low": 0.8296382730455076,
+          "ci_high": 0.8763127187864644
+        },
+        "per_class": {
+          "glioma": {
+            "n": 257,
+            "value": 0.8249027237354085,
+            "ci_low": 0.7782101167315175,
+            "ci_high": 0.867704280155642
+          },
+          "meningioma": {
+            "n": 254,
+            "value": 0.7834645669291339,
+            "ci_low": 0.7322834645669292,
+            "ci_high": 0.8346456692913385
+          },
+          "notumor": {
+            "n": 258,
+            "value": 0.9844961240310077,
+            "ci_low": 0.9689922480620154,
+            "ci_high": 0.9961240310077519
+          },
+          "pituitary": {
+            "n": 253,
+            "value": 0.8972332015810277,
+            "ci_low": 0.857707509881423,
+            "ci_high": 0.932806324110672
+          }
+        },
+        "tumor_predicted_notumor": 12,
+        "notumor_recall": 0.9844961240310077,
+        "tumor_gap_512_minus_other": {
+          "n_a": 709,
+          "n_b": 55,
+          "value": 0.2141300166688037,
+          "ci_low": 0.08811386075137839,
+          "ci_high": 0.337479163995384
+        }
+      },
+      "diff_vs_a0": {
+        "n": 1022,
+        "value": -0.04598825831702544,
+        "ci_low": -0.06555772994129158,
+        "ci_high": -0.026418786692759294
+      },
+      "criteria": {
+        "C1": {
+          "gain": -0.04598825831702544,
+          "ci": [
+            -0.06555772994129158,
+            -0.026418786692759294
+          ],
+          "passed": false
+        },
+        "C2": {
+          "pmram_flip_rate": 0.09621993127147767,
+          "n": 291,
+          "passed": true
+        },
+        "C3": {
+          "flip_rates": {
+            "miroir": 0.05968688845401174,
+            "bandes_noires_25": 0.018590998043052837,
+            "zoom_0.85": 0.030332681017612523,
+            "zoom_1.15": 0.05870841487279843,
+            "recadrage_decentre_90": 0.043052837573385516,
+            "etirement_+20": 0.0675146771037182,
+            "etirement_-20": 0.06457925636007827,
+            "jpeg_50": 0.0273972602739726
+          },
+          "failed": [
+            "miroir",
+            "zoom_1.15"
+          ],
+          "passed": false
+        },
+        "C4": {
+          "tumor_predicted_notumor": 12,
+          "reference": 15,
+          "notumor_recall": 0.9844961240310077,
+          "passed": true
+        },
+        "C5": {
+          "gap": {
+            "n_a": 709,
+            "n_b": 55,
+            "value": 0.2141300166688037,
+            "ci_low": 0.08811386075137839,
+            "ci_high": 0.337479163995384
+          },
+          "passed": false
+        }
+      },
+      "accuracy": 0.87279843444227,
+      "pmram_flip_rate": 0.09621993127147767
+    }
+  },
+  "decision": {
+    "eligible": [],
+    "winner": null,
+    "decision": "aucun modèle ne passe C2, C3 et C4 : on garde le modèle en ligne et on publie les chiffres honnêtes"
+  },
+  "note_c6": "C6 (parité navigateur, taille ONNX) se mesure seulement pour un gagnant"
+}
