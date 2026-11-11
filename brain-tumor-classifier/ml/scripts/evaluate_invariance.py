@@ -30,10 +30,10 @@ from pathlib import Path
 import numpy as np
 import torch
 
-from brain_mri.config import Config, ModelConfig, load_config
+from brain_mri.config import Config, load_config
 from brain_mri.data import read_split_manifest
 from brain_mri.invariance import analyze_pmram_by_twin_part, measure_transformations
-from brain_mri.model import build_model, get_device, load_checkpoint
+from brain_mri.model import build_model_for_checkpoint, get_device, load_checkpoint
 from brain_mri.near_duplicates import list_images
 from brain_mri.transforms import build_transforms
 
@@ -244,7 +244,7 @@ def main(argv: list[str] | None = None) -> dict:
     device = get_device()
     checkpoint = load_checkpoint(path, device)
     class_names = list(checkpoint["class_names"])
-    model = build_model(len(class_names), ModelConfig(pretrained=False, freeze_backbone=False))
+    model = build_model_for_checkpoint(checkpoint, config.model)
     model.load_state_dict(checkpoint["state_dict"])
     model.to(device)
     mode = config.data.preprocessing

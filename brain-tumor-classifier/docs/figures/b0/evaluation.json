@@ -1,0 +1,700 @@
+{
+  "accuracy": 0.8855185909980431,
+  "confusion_matrix": [
+    [
+      211,
+      36,
+      3,
+      7
+    ],
+    [
+      24,
+      203,
+      5,
+      22
+    ],
+    [
+      0,
+      5,
+      252,
+      1
+    ],
+    [
+      2,
+      12,
+      0,
+      239
+    ]
+  ],
+  "per_class": {
+    "glioma": {
+      "precision": 0.890295358649789,
+      "recall": 0.8210116731517509,
+      "f1": 0.854251012145749,
+      "support": 257
+    },
+    "meningioma": {
+      "precision": 0.79296875,
+      "recall": 0.7992125984251969,
+      "f1": 0.796078431372549,
+      "support": 254
+    },
+    "notumor": {
+      "precision": 0.9692307692307692,
+      "recall": 0.9767441860465116,
+      "f1": 0.972972972972973,
+      "support": 258
+    },
+    "pituitary": {
+      "precision": 0.8884758364312267,
+      "recall": 0.9446640316205533,
+      "f1": 0.9157088122605364,
+      "support": 253
+    }
+  },
+  "top_confusions": [
+    {
+      "true": "glioma",
+      "predicted": "meningioma",
+      "count": 36
+    },
+    {
+      "true": "meningioma",
+      "predicted": "glioma",
+      "count": 24
+    },
+    {
+      "true": "meningioma",
+      "predicted": "pituitary",
+      "count": 22
+    },
+    {
+      "true": "pituitary",
+      "predicted": "meningioma",
+      "count": 12
+    },
+    {
+      "true": "glioma",
+      "predicted": "pituitary",
+      "count": 7
+    },
+    {
+      "true": "meningioma",
+      "predicted": "notumor",
+      "count": 5
+    },
+    {
+      "true": "notumor",
+      "predicted": "meningioma",
+      "count": 5
+    },
+    {
+      "true": "glioma",
+      "predicted": "notumor",
+      "count": 3
+    },
+    {
+      "true": "pituitary",
+      "predicted": "glioma",
+      "count": 2
+    },
+    {
+      "true": "notumor",
+      "predicted": "pituitary",
+      "count": 1
+    }
+  ],
+  "errors": [
+    {
+      "file": "Testing/glioma/Te-gl_101.jpg",
+      "true": "glioma",
+      "predicted": "meningioma"
+    },
+    {
+      "file": "Testing/glioma/Te-gl_159.jpg",
+      "true": "glioma",
+      "predicted": "pituitary"
+    },
+    {
+      "file": "Testing/glioma/Te-gl_193.jpg",
+      "true": "glioma",
+      "predicted": "meningioma"
+    },
+    {
+      "file": "Testing/glioma/Te-gl_195.jpg",
+      "true": "glioma",
+      "predicted": "meningioma"
+    },
+    {
+      "file": "Testing/glioma/Te-gl_204.jpg",
+      "true": "glioma",
+      "predicted": "notumor"
+    },
+    {
+      "file": "Testing/glioma/Te-gl_211.jpg",
+      "true": "glioma",
+      "predicted": "meningioma"
+    },
+    {
+      "file": "Testing/glioma/Te-gl_232.jpg",
+      "true": "glioma",
+      "predicted": "meningioma"
+    },
+    {
+      "file": "Testing/glioma/Te-gl_237.jpg",
+      "true": "glioma",
+      "predicted": "meningioma"
+    },
+    {
+      "file": "Testing/glioma/Te-gl_25.jpg",
+      "true": "glioma",
+      "predicted": "meningioma"
+    },
+    {
+      "file": "Testing/glioma/Te-gl_259.jpg",
+      "true": "glioma",
+      "predicted": "notumor"
+    },
+    {
+      "file": "Testing/glioma/Te-gl_27.jpg",
+      "true": "glioma",
+      "predicted": "meningioma"
+    },
+    {
+      "file": "Testing/glioma/Te-gl_275.jpg",
+      "true": "glioma",
+      "predicted": "meningioma"
+    },
+    {
+      "file": "Testing/glioma/Te-gl_287.jpg",
+      "true": "glioma",
+      "predicted": "meningioma"
+    },
+    {
+      "file": "Testing/glioma/Te-gl_336.jpg",
+      "true": "glioma",
+      "predicted": "meningioma"
+    },
+    {
+      "file": "Testing/glioma/Te-gl_51.jpg",
+      "true": "glioma",
+      "predicted": "meningioma"
+    },
+    {
+      "file": "Testing/glioma/Te-gl_58.jpg",
+      "true": "glioma",
+      "predicted": "meningioma"
+    },
+    {
+      "file": "Testing/glioma/Te-gl_62.jpg",
+      "true": "glioma",
+      "predicted": "notumor"
+    },
+    {
+      "file": "Testing/glioma/Te-gl_74.jpg",
+      "true": "glioma",
+      "predicted": "meningioma"
+    },
+    {
+      "file": "Testing/glioma/Te-gl_82.jpg",
+      "true": "glioma",
+      "predicted": "pituitary"
+    },
+    {
+      "file": "Testing/glioma/Te-gl_94.jpg",
+      "true": "glioma",
+      "predicted": "pituitary"
+    },
+    {
+      "file": "Testing/meningioma/Te-aug-me_10.jpg",
+      "true": "meningioma",
+      "predicted": "pituitary"
+    },
+    {
+      "file": "Testing/meningioma/Te-aug-me_5.jpg",
+      "true": "meningioma",
+      "predicted": "glioma"
+    },
+    {
+      "file": "Testing/meningioma/Te-aug-me_55.jpg",
+      "true": "meningioma",
+      "predicted": "pituitary"
+    },
+    {
+      "file": "Testing/meningioma/Te-aug-me_9.jpg",
+      "true": "meningioma",
+      "predicted": "pituitary"
+    },
+    {
+      "file": "Testing/meningioma/Te-me_126.jpg",
+      "true": "meningioma",
+      "predicted": "pituitary"
+    },
+    {
+      "file": "Testing/meningioma/Te-me_141.jpg",
+      "true": "meningioma",
+      "predicted": "pituitary"
+    },
+    {
+      "file": "Testing/meningioma/Te-me_202.jpg",
+      "true": "meningioma",
+      "predicted": "notumor"
+    },
+    {
+      "file": "Testing/meningioma/Te-me_208.jpg",
+      "true": "meningioma",
+      "predicted": "notumor"
+    },
+    {
+      "file": "Testing/meningioma/Te-me_24.jpg",
+      "true": "meningioma",
+      "predicted": "pituitary"
+    },
+    {
+      "file": "Testing/meningioma/Te-me_34.jpg",
+      "true": "meningioma",
+      "predicted": "glioma"
+    },
+    {
+      "file": "Testing/meningioma/Te-me_52.jpg",
+      "true": "meningioma",
+      "predicted": "pituitary"
+    },
+    {
+      "file": "Testing/pituitary/Te-pi_293.jpg",
+      "true": "pituitary",
+      "predicted": "glioma"
+    },
+    {
+      "file": "Testing/pituitary/Te-pi_303.jpg",
+      "true": "pituitary",
+      "predicted": "meningioma"
+    },
+    {
+      "file": "Testing/pituitary/Te-pi_367.jpg",
+      "true": "pituitary",
+      "predicted": "meningioma"
+    },
+    {
+      "file": "Testing/pituitary/Te-pi_370.jpg",
+      "true": "pituitary",
+      "predicted": "meningioma"
+    },
+    {
+      "file": "Testing/pituitary/Te-pi_80.jpg",
+      "true": "pituitary",
+      "predicted": "meningioma"
+    },
+    {
+      "file": "Training/glioma/Tr-gl_1033.jpg",
+      "true": "glioma",
+      "predicted": "meningioma"
+    },
+    {
+      "file": "Training/glioma/Tr-gl_1174.jpg",
+      "true": "glioma",
+      "predicted": "meningioma"
+    },
+    {
+      "file": "Training/glioma/Tr-gl_1198.jpg",
+      "true": "glioma",
+      "predicted": "meningioma"
+    },
+    {
+      "file": "Training/glioma/Tr-gl_1203.jpg",
+      "true": "glioma",
+      "predicted": "meningioma"
+    },
+    {
+      "file": "Training/glioma/Tr-gl_1205.jpg",
+      "true": "glioma",
+      "predicted": "pituitary"
+    },
+    {
+      "file": "Training/glioma/Tr-gl_1329.jpg",
+      "true": "glioma",
+      "predicted": "meningioma"
+    },
+    {
+      "file": "Training/glioma/Tr-gl_1384.jpg",
+      "true": "glioma",
+      "predicted": "meningioma"
+    },
+    {
+      "file": "Training/glioma/Tr-gl_15.jpg",
+      "true": "glioma",
+      "predicted": "meningioma"
+    },
+    {
+      "file": "Training/glioma/Tr-gl_178.jpg",
+      "true": "glioma",
+      "predicted": "meningioma"
+    },
+    {
+      "file": "Training/glioma/Tr-gl_275.jpg",
+      "true": "glioma",
+      "predicted": "meningioma"
+    },
+    {
+      "file": "Training/glioma/Tr-gl_305.jpg",
+      "true": "glioma",
+      "predicted": "meningioma"
+    },
+    {
+      "file": "Training/glioma/Tr-gl_307.jpg",
+      "true": "glioma",
+      "predicted": "meningioma"
+    },
+    {
+      "file": "Training/glioma/Tr-gl_336.jpg",
+      "true": "glioma",
+      "predicted": "pituitary"
+    },
+    {
+      "file": "Training/glioma/Tr-gl_384.jpg",
+      "true": "glioma",
+      "predicted": "pituitary"
+    },
+    {
+      "file": "Training/glioma/Tr-gl_5.jpg",
+      "true": "glioma",
+      "predicted": "meningioma"
+    },
+    {
+      "file": "Training/glioma/Tr-gl_529.jpg",
+      "true": "glioma",
+      "predicted": "pituitary"
+    },
+    {
+      "file": "Training/glioma/Tr-gl_556.jpg",
+      "true": "glioma",
+      "predicted": "meningioma"
+    },
+    {
+      "file": "Training/glioma/Tr-gl_601.jpg",
+      "true": "glioma",
+      "predicted": "meningioma"
+    },
+    {
+      "file": "Training/glioma/Tr-gl_642.jpg",
+      "true": "glioma",
+      "predicted": "meningioma"
+    },
+    {
+      "file": "Training/glioma/Tr-gl_720.jpg",
+      "true": "glioma",
+      "predicted": "meningioma"
+    },
+    {
+      "file": "Training/glioma/Tr-gl_731.jpg",
+      "true": "glioma",
+      "predicted": "meningioma"
+    },
+    {
+      "file": "Training/glioma/Tr-gl_732.jpg",
+      "true": "glioma",
+      "predicted": "meningioma"
+    },
+    {
+      "file": "Training/glioma/Tr-gl_896.jpg",
+      "true": "glioma",
+      "predicted": "meningioma"
+    },
+    {
+      "file": "Training/glioma/Tr-gl_920.jpg",
+      "true": "glioma",
+      "predicted": "meningioma"
+    },
+    {
+      "file": "Training/glioma/Tr-gl_931.jpg",
+      "true": "glioma",
+      "predicted": "meningioma"
+    },
+    {
+      "file": "Training/glioma/Tr-gl_987.jpg",
+      "true": "glioma",
+      "predicted": "meningioma"
+    },
+    {
+      "file": "Training/meningioma/Tr-aug-me_46.jpg",
+      "true": "meningioma",
+      "predicted": "pituitary"
+    },
+    {
+      "file": "Training/meningioma/Tr-aug-me_76.jpg",
+      "true": "meningioma",
+      "predicted": "glioma"
+    },
+    {
+      "file": "Training/meningioma/Tr-aug-me_9.jpg",
+      "true": "meningioma",
+      "predicted": "glioma"
+    },
+    {
+      "file": "Training/meningioma/Tr-aug-me_99.jpg",
+      "true": "meningioma",
+      "predicted": "pituitary"
+    },
+    {
+      "file": "Training/meningioma/Tr-me_1043.jpg",
+      "true": "meningioma",
+      "predicted": "glioma"
+    },
+    {
+      "file": "Training/meningioma/Tr-me_1060.jpg",
+      "true": "meningioma",
+      "predicted": "glioma"
+    },
+    {
+      "file": "Training/meningioma/Tr-me_1106.jpg",
+      "true": "meningioma",
+      "predicted": "pituitary"
+    },
+    {
+      "file": "Training/meningioma/Tr-me_1223.jpg",
+      "true": "meningioma",
+      "predicted": "glioma"
+    },
+    {
+      "file": "Training/meningioma/Tr-me_1256.jpg",
+      "true": "meningioma",
+      "predicted": "pituitary"
+    },
+    {
+      "file": "Training/meningioma/Tr-me_1297.jpg",
+      "true": "meningioma",
+      "predicted": "pituitary"
+    },
+    {
+      "file": "Training/meningioma/Tr-me_149.jpg",
+      "true": "meningioma",
+      "predicted": "glioma"
+    },
+    {
+      "file": "Training/meningioma/Tr-me_152.jpg",
+      "true": "meningioma",
+      "predicted": "glioma"
+    },
+    {
+      "file": "Training/meningioma/Tr-me_154.jpg",
+      "true": "meningioma",
+      "predicted": "pituitary"
+    },
+    {
+      "file": "Training/meningioma/Tr-me_160.jpg",
+      "true": "meningioma",
+      "predicted": "pituitary"
+    },
+    {
+      "file": "Training/meningioma/Tr-me_211.jpg",
+      "true": "meningioma",
+      "predicted": "glioma"
+    },
+    {
+      "file": "Training/meningioma/Tr-me_277.jpg",
+      "true": "meningioma",
+      "predicted": "glioma"
+    },
+    {
+      "file": "Training/meningioma/Tr-me_289.jpg",
+      "true": "meningioma",
+      "predicted": "glioma"
+    },
+    {
+      "file": "Training/meningioma/Tr-me_302.jpg",
+      "true": "meningioma",
+      "predicted": "glioma"
+    },
+    {
+      "file": "Training/meningioma/Tr-me_328.jpg",
+      "true": "meningioma",
+      "predicted": "glioma"
+    },
+    {
+      "file": "Training/meningioma/Tr-me_336.jpg",
+      "true": "meningioma",
+      "predicted": "pituitary"
+    },
+    {
+      "file": "Training/meningioma/Tr-me_348.jpg",
+      "true": "meningioma",
+      "predicted": "pituitary"
+    },
+    {
+      "file": "Training/meningioma/Tr-me_42.jpg",
+      "true": "meningioma",
+      "predicted": "pituitary"
+    },
+    {
+      "file": "Training/meningioma/Tr-me_421.jpg",
+      "true": "meningioma",
+      "predicted": "notumor"
+    },
+    {
+      "file": "Training/meningioma/Tr-me_465.jpg",
+      "true": "meningioma",
+      "predicted": "notumor"
+    },
+    {
+      "file": "Training/meningioma/Tr-me_48.jpg",
+      "true": "meningioma",
+      "predicted": "pituitary"
+    },
+    {
+      "file": "Training/meningioma/Tr-me_522.jpg",
+      "true": "meningioma",
+      "predicted": "glioma"
+    },
+    {
+      "file": "Training/meningioma/Tr-me_529.jpg",
+      "true": "meningioma",
+      "predicted": "glioma"
+    },
+    {
+      "file": "Training/meningioma/Tr-me_546.jpg",
+      "true": "meningioma",
+      "predicted": "notumor"
+    },
+    {
+      "file": "Training/meningioma/Tr-me_552.jpg",
+      "true": "meningioma",
+      "predicted": "glioma"
+    },
+    {
+      "file": "Training/meningioma/Tr-me_592.jpg",
+      "true": "meningioma",
+      "predicted": "glioma"
+    },
+    {
+      "file": "Training/meningioma/Tr-me_596.jpg",
+      "true": "meningioma",
+      "predicted": "glioma"
+    },
+    {
+      "file": "Training/meningioma/Tr-me_719.jpg",
+      "true": "meningioma",
+      "predicted": "glioma"
+    },
+    {
+      "file": "Training/meningioma/Tr-me_788.jpg",
+      "true": "meningioma",
+      "predicted": "pituitary"
+    },
+    {
+      "file": "Training/meningioma/Tr-me_845.jpg",
+      "true": "meningioma",
+      "predicted": "pituitary"
+    },
+    {
+      "file": "Training/meningioma/Tr-me_852.jpg",
+      "true": "meningioma",
+      "predicted": "glioma"
+    },
+    {
+      "file": "Training/meningioma/Tr-me_857.jpg",
+      "true": "meningioma",
+      "predicted": "pituitary"
+    },
+    {
+      "file": "Training/meningioma/Tr-me_878.jpg",
+      "true": "meningioma",
+      "predicted": "glioma"
+    },
+    {
+      "file": "Training/meningioma/Tr-me_914.jpg",
+      "true": "meningioma",
+      "predicted": "pituitary"
+    },
+    {
+      "file": "Training/meningioma/Tr-me_934.jpg",
+      "true": "meningioma",
+      "predicted": "glioma"
+    },
+    {
+      "file": "Training/meningioma/Tr-me_971.jpg",
+      "true": "meningioma",
+      "predicted": "glioma"
+    },
+    {
+      "file": "Training/notumor/Tr-no_1019.jpg",
+      "true": "notumor",
+      "predicted": "pituitary"
+    },
+    {
+      "file": "Training/notumor/Tr-no_20.jpg",
+      "true": "notumor",
+      "predicted": "meningioma"
+    },
+    {
+      "file": "Training/notumor/Tr-no_244.jpg",
+      "true": "notumor",
+      "predicted": "meningioma"
+    },
+    {
+      "file": "Training/notumor/Tr-no_408.jpg",
+      "true": "notumor",
+      "predicted": "meningioma"
+    },
+    {
+      "file": "Training/notumor/Tr-no_913.jpg",
+      "true": "notumor",
+      "predicted": "meningioma"
+    },
+    {
+      "file": "Training/notumor/Tr-no_977.jpg",
+      "true": "notumor",
+      "predicted": "meningioma"
+    },
+    {
+      "file": "Training/pituitary/Tr-pi_1208.jpg",
+      "true": "pituitary",
+      "predicted": "meningioma"
+    },
+    {
+      "file": "Training/pituitary/Tr-pi_317.jpg",
+      "true": "pituitary",
+      "predicted": "meningioma"
+    },
+    {
+      "file": "Training/pituitary/Tr-pi_470.jpg",
+      "true": "pituitary",
+      "predicted": "meningioma"
+    },
+    {
+      "file": "Training/pituitary/Tr-pi_666.jpg",
+      "true": "pituitary",
+      "predicted": "meningioma"
+    },
+    {
+      "file": "Training/pituitary/Tr-pi_761.jpg",
+      "true": "pituitary",
+      "predicted": "meningioma"
+    },
+    {
+      "file": "Training/pituitary/Tr-pi_770.jpg",
+      "true": "pituitary",
+      "predicted": "meningioma"
+    },
+    {
+      "file": "Training/pituitary/Tr-pi_773.jpg",
+      "true": "pituitary",
+      "predicted": "glioma"
+    },
+    {
+      "file": "Training/pituitary/Tr-pi_834.jpg",
+      "true": "pituitary",
+      "predicted": "meningioma"
+    },
+    {
+      "file": "Training/pituitary/Tr-pi_949.jpg",
+      "true": "pituitary",
+      "predicted": "meningioma"
+    }
+  ],
+  "checkpoint": {
+    "phase": "head",
+    "epoch_in_phase": 49,
+    "val_loss": 0.2987053096294403,
+    "val_acc": 0.8901846408843994
+  }
+}

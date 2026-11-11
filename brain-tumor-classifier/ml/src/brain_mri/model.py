@@ -34,8 +34,12 @@ def unfreeze(module: nn.Module) -> None:
         param.requires_grad = True
 
 
-def build_model(num_classes: int, config: ModelConfig | None = None) -> models.ResNet:
-    """Crée un ResNet-50 avec une nouvelle tête de classification.
+def build_model(num_classes: int, config: ModelConfig | None = None) -> nn.Module:
+    """Crée le modèle choisi par ``config.architecture`` (ResNet-50 par défaut).
+
+    Avec ``architecture = "dinov2_s"``, renvoie un
+    :class:`brain_mri.dinov2_head.Dinov2Classifier` (DINOv2-small gelé + couche linéaire) ;
+    les autres réglages (``pretrained``, ``freeze_backbone``) ne servent alors pas.
 
     Args:
         num_classes: Nombre de classes en sortie (4 ici).
@@ -47,6 +51,11 @@ def build_model(num_classes: int, config: ModelConfig | None = None) -> models.R
         gelé si ``config.freeze_backbone`` vaut True.
     """
     config = config or ModelConfig()
+    if config.architecture == "dinov2_s":
+        # Import ici : le ResNet n'a pas besoin de charger la bibliothèque transformers.
+        from brain_mri.dinov2_head import Dinov2Classifier
+
+        return Dinov2Classifier(num_classes)
     weights = ResNet50_Weights.IMAGENET1K_V1 if config.pretrained else None
     model = models.resnet50(weights=weights)
     if config.freeze_backbone:
@@ -55,6 +64,25 @@ def build_model(num_classes: int, config: ModelConfig | None = None) -> models.R
     # requires_grad = True, donc seule elle sera entraînée.
     model.fc = nn.Linear(model.fc.in_features, num_classes)
     return model
+
+
+def build_model_for_checkpoint(checkpoint: dict, config: ModelConfig | None = None) -> nn.Module:
+    """Crée le modèle vide qui correspond à un checkpoint, prêt pour ``load_state_dict``.
+
+    L'architecture est lue dans le checkpoint (clé ``architecture``) ; les anciens checkpoints
+    du ResNet n'ont pas cette clé : on prend alors celle de ``config`` (``resnet50`` par défaut).
+
+    Args:
+        checkpoint: Dictionnaire lu par :func:`load_checkpoint`.
+        config: Configuration du modèle, utilisée si le checkpoint n'indique pas l'architecture.
+
+    Returns:
+        Le modèle, sans poids pré-entraînés téléchargés (sauf le corps DINOv2, épinglé),
+        en attente des poids du checkpoint.
+    """
+    architecture = checkpoint.get("architecture") or (config or ModelConfig()).architecture
+    model_config = ModelConfig(architecture=architecture, pretrained=False, freeze_backbone=False)
+    return build_model(len(checkpoint["class_names"]), model_config)
 
 
 def unfreeze_last_block(model: models.ResNet) -> None:
