@@ -72,6 +72,8 @@ convention = "google"
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 markers = ["slow: test lent (export ONNX d'un ResNet-50), à exclure avec -m 'not slow'"]
+# Dossiers temporaires des tests gardés seulement en cas d'échec (sinon plusieurs Go par passage)
+tmp_path_retention_policy = "failed"
 
 [tool.uv.sources]
 torch = { index = "pytorch-cpu", marker = "sys_platform == 'linux'" }
