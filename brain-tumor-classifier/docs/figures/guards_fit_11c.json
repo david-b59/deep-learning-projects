@@ -1,0 +1,62 @@
+{
+  "regles": "ml/splits/guards_rules.md",
+  "modele": "models/a1/best.pt",
+  "poids_garde_fous": "models/a1/guards.safetensors",
+  "seuils": {
+    "color": 0.12050217390060425,
+    "tau_d": 20.8941650390625,
+    "tau_p": 0.4894391894340515,
+    "tau_t2": 0.6720756888389587
+  },
+  "couleur": {
+    "maximum_observe_kaggle_train_val": 0.0602510873863187,
+    "plancher": 0.01
+  },
+  "temperature": 1.216663221647324,
+  "ece_validation": {
+    "avant": 0.02807721001760313,
+    "apres": 0.023195802080821636
+  },
+  "exactitude_validation": 0.9222546161321672,
+  "g0_part_validation_refusee_distance_ou_confiance": 0.04956268221574344,
+  "g0_autorise": true,
+  "regression_t2": {
+    "C": 0.0001,
+    "grille_C": [
+      0.0001,
+      0.001,
+      0.01,
+      0.1,
+      1.0,
+      10.0
+    ],
+    "exactitude_equilibree_cv_par_C": {
+      "0.0001": 1.0,
+      "0.001": 1.0,
+      "0.01": 1.0,
+      "0.1": 1.0,
+      "1.0": 1.0,
+      "10.0": 1.0
+    },
+    "exactitude_equilibree_cv": 1.0,
+    "plis": 5,
+    "fausses_alertes_figshare_validation": 0.01969057665260197,
+    "fausses_alertes_pandit_t1c_hors_pli": 0.0,
+    "rappel_t2_pandit_dev_hors_pli": 0.89375
+  },
+  "images_par_source": {
+    "kaggle_train": 5125,
+    "kaggle_val": 1029,
+    "kaggle_val_figshare": 711,
+    "pandit_dev_images": 320,
+    "pandit_dev_patients": 40,
+    "pandit_dev_t1": 160,
+    "pandit_dev_t2": 160
+  },
+  "choix_figshare": "kaggle_grouped.csv ne porte pas l'identifiant figshare : on prend is_512 == 1 et classe != notumor (les images 512x512 de tumeurs sont les copies figshare ; notumor n'existe pas dans figshare).",
+  "donnees_interdites_verifiees": [
+    "kaggle test",
+    "patients test Pandit (dont 16)",
+    "hors sujet"
+  ]
+}
