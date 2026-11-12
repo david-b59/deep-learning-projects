@@ -202,7 +202,8 @@ def fetch_photos() -> list[dict]:
     Pour chaque sujet de ``WIKI_QUERIES``, on cherche des fichiers JPEG, on lit la licence de
     chaque image dans ``extmetadata`` et on garde les 10 premières acceptées (ordre mélangé avec
     la graine 42). Vignettes de 512 px. Les résultats de la recherche Wikimedia peuvent changer
-    avec le temps : c'est ``offtopic.csv`` (titres, URL, sha256) qui fait foi pour reproduire le jeu.
+    avec le temps : c'est ``offtopic.csv`` (titres, URL, sha256) qui fait foi pour reproduire
+    le jeu.
 
     Returns:
         Lignes du manifeste.
